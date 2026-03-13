@@ -150,6 +150,8 @@
   </section>
 
   <script>
+    const LANG_KEY = "museumLang";
+
     const texts = {
       cz: {
         overline: "VÍTEJTE V",
@@ -165,7 +167,7 @@
       }
     };
 
-    let currentLang = "cz";
+    let currentLang = localStorage.getItem(LANG_KEY) === "en" ? "en" : "cz";
 
     const overlineEl = document.getElementById("overline");
     const titleEl = document.getElementById("heroTitle");
@@ -181,6 +183,7 @@
       subtitleEl.textContent = t.subtitle;
       enterBtn.textContent = t.cta;
       document.documentElement.lang = lang;
+      localStorage.setItem(LANG_KEY, lang);
     }
 
     langToggle.addEventListener("click", () => {
