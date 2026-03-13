@@ -19,7 +19,7 @@
       z-index: 25;
       border: 1px solid #2E3250;
       border-radius: 999px;
-      background: rgba(36, 40, 64, 0.75);
+      background: rgba(31, 34, 54, 0.75);
       color: #8A9BB5;
       padding: 6px 12px;
       font-size: 12px;
@@ -33,7 +33,27 @@
       border-color: #C9A84C;
       color: #C9A84C;
     }
+    .kreslit{
+      position: fixed;
+      top: 18px;
+      right: 120px;
+      z-index: 25;
+      border: 1px solid #2E3250;
+      border-radius: 999px;
+      background: rgba(31, 34, 54, 0.75);
+      color: #8A9BB5;
+      padding: 6px 12px;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: border-color 0.25s ease, color 0.25s ease;
+      font-family: 'Montserrat', sans-serif;
+    }
 
+    .kreslit:hover {
+      border-color: #C9A84C;
+      color: #C9A84C;
+    }
     /* ── Wall ── */
     #wall {
       position: relative;
@@ -235,3 +255,15 @@
       color: #4A5570;
       letter-spacing: 0.04em;
     }
+#obal_nav{
+    position: fixed;
+    top: 12px;
+    right: 10px;
+    z-index: 25;
+    width: 300px;
+    height: 42px;
+    border: 1px solid #6f738d;
+    border-radius: 999px;
+    background: rgba(45, 49, 73, 0.75);
+    color: #8A9BB5;
+}

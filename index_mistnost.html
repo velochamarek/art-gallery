@@ -10,8 +10,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400&display=swap" rel="stylesheet" />
 </head>
 <body>
+    <div id="obal_nav">
+        <button onclick="window.location.href='editace.html'" class="kreslit">Kreslit</button>
+        <button id="langToggle" class="lang-toggle" type="button">CZ / EN</button>
+    </div>
 
-<button id="langToggle" class="lang-toggle" type="button">CZ / EN</button>
 
 <div id="wall">
 
@@ -154,8 +157,8 @@
     fr.style.setProperty('--ratio', 1);
     const img = document.createElement('img');
     img.src = paintings[idx].url;
-    img.className = "obrazy";
     img.alt = paintings[idx].title[currentLang];
+
     img.addEventListener('load', () => applyNaturalRatio(fr, img));
     if (img.complete) {
       applyNaturalRatio(fr, img);
@@ -282,6 +285,5 @@
     if (e.key === 'ArrowLeft')  navigate(-1);
   });
 </script>
-<script src="./script_obraz.js"></script>
 </body>
 </html>
