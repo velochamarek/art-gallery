@@ -1,12 +1,11 @@
 // --- LOGIKA MENU A PANELŮ ---
-//kuirzor
+//kurzor
 const kurzor = document.getElementById("kurzor");
 
 document.addEventListener("mousemove", (e) => {
-  kurzor.style.left = (e.pageX -20) + "px";
-  kurzor.style.top = (e.pageY -10) + "px";
+    kurzor.style.left = (e.pageX - 20) + "px";
+    kurzor.style.top = (e.pageY - 10) + "px";
 });
-
 
 const menu = document.getElementById("sideMenu");
 document.getElementById("openMenu").onclick = () => {
@@ -19,8 +18,8 @@ document.getElementById("closeMenu").onclick = () => {
 
 const panels = document.querySelectorAll(".panel");
 function showPanel(id) {
-    panels.forEach(p => p.classList.add("hidden")); // Skryje všechny
-    if(id) document.getElementById("panel-" + id).classList.remove("hidden"); // Zobrazí vybraný
+    panels.forEach(p => p.classList.add("hidden")); 
+    if(id) document.getElementById("panel-" + id).classList.remove("hidden"); 
 }
 
 document.querySelectorAll(".menu-item[data-panel]").forEach(btn => {
@@ -45,10 +44,25 @@ const ctx = canvas.getContext("2d");
 let painting = false;
 let colorPicker = document.getElementById("colorPicker");
 
+// DYNAMICKÉ NAČTENÍ OBRÁZKU Z GALERIE
 const img = new Image();
-// Přidán crossorigin, aby fungovalo ukládání obrázku staženého z internetu
 img.crossOrigin = "anonymous"; 
-img.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/600px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg"; 
+
+// Tady se podíváme, co nám galerie poslala
+const savedArt = localStorage.getItem("currentPainting");
+const savedTitle = localStorage.getItem("selectedPaintingTitle");
+const savedDesc = localStorage.getItem("selectedPaintingDesc");
+
+// Pokud máme cestu z galerie, použijeme ji, jinak default Mona Lisa
+img.src = savedArt ? savedArt : "./art/mona_lisa.jpg"; 
+
+// Aktualizace textu v Info panelu, aby tam nebyla jen Mona Lisa
+if (savedTitle) {
+    const infoHeader = document.querySelector("#panel-info h3");
+    const infoText = document.querySelector("#panel-info p");
+    if (infoHeader) infoHeader.textContent = savedTitle;
+    if (infoText) infoText.textContent = savedDesc;
+}
 
 img.onload = () => {
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -72,7 +86,6 @@ function draw(e) {
     ctx.lineCap = "round";
     ctx.strokeStyle = colorPicker.value;
 
-    // Oprava pro přesné zaměření kurzoru
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -89,16 +102,15 @@ canvas.addEventListener("mousemove", draw);
 
 // --- ULOŽENÍ A VYMAZÁNÍ ---
 document.getElementById("clearCanvas").onclick = function clearCanvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // Smaže vše
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height); // Vykreslí čistou Monu Lisu
-    localStorage.removeItem("editedMonaLisa"); // Smaže zálohu z paměti
+    ctx.clearRect(0, 0, canvas.width, canvas.height); 
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height); 
+    localStorage.removeItem("editedMonaLisa"); 
 };
 
 document.getElementById("saveImage").onclick = function saveImage() {
     const data = canvas.toDataURL("image/png");
     localStorage.setItem("editedMonaLisa", data);
     
-    // Navíc umožníme uživateli si obrázek stáhnout do PC!
     const link = document.createElement("a");
     link.download = "moje-umeni.png";
     link.href = data;
