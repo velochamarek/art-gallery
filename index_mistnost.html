@@ -219,6 +219,7 @@ if (localStorage.getItem("audioAllowed") === "yes") {
 
   function updateInfo(idx) {
     infoPanel.classList.add('fading');
+    localStorage.setItem("currentPainting", paintings[idx].url);
     setTimeout(() => {
       const p = paintings[idx];
       infoTitle.textContent  = p.title[currentLang];
