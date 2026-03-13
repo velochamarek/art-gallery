@@ -216,7 +216,7 @@ if (localStorage.getItem("audioAllowed") === "yes") {
         }
       });
       infoPanel.classList.remove('fading');
-    }, 300);
+    }, 400);
   }
 
   updateInfo(centerIdx);
@@ -257,7 +257,7 @@ if (localStorage.getItem("audioAllowed") === "yes") {
         rightIdx    = nextRight;
         updateInfo(centerIdx);
         animating = false;
-      }, 600);
+      }, 220);
 
     } else {
       // ← left: center exits right, left becomes center, new frame enters from left
@@ -281,7 +281,7 @@ if (localStorage.getItem("audioAllowed") === "yes") {
         rightIdx    = nextRight;
         updateInfo(centerIdx);
         animating = false;
-      }, 600);
+      }, 220);
     }
   }
 
