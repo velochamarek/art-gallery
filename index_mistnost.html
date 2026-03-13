@@ -22,6 +22,28 @@
       color: #E8E2D0;
     }
 
+    .lang-toggle {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 25;
+      border: 1px solid #2E3250;
+      border-radius: 999px;
+      background: rgba(36, 40, 64, 0.75);
+      color: #8A9BB5;
+      padding: 6px 12px;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: border-color 0.25s ease, color 0.25s ease;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .lang-toggle:hover {
+      border-color: #C9A84C;
+      color: #C9A84C;
+    }
+
     /* ── Wall ── */
     #wall {
       position: relative;
@@ -227,6 +249,8 @@
 </head>
 <body>
 
+<button id="langToggle" class="lang-toggle" type="button">CZ / EN</button>
+
 <div id="wall">
 
   <button class="arrow" id="btn-left">&#8249;</button>
@@ -245,41 +269,98 @@
 </div>
 
 <script>
+  const LANG_KEY = "museumLang";
+  let currentLang = localStorage.getItem(LANG_KEY) === "en" ? "en" : "cz";
+
   const paintings = [
     {
-      title: "The Starry Night",
-      artist: "Vincent van Gogh · 1889",
-      desc: "A swirling nocturnal sky above the village of Saint-Rémy-de-Provence.",
+      title: {
+        cz: "Hvězdná noc",
+        en: "The Starry Night"
+      },
+      artist: {
+        cz: "Vincent van Gogh · 1889",
+        en: "Vincent van Gogh · 1889"
+      },
+      desc: {
+        cz: "Vířící noční obloha nad vesnicí Saint-Rémy-de-Provence.",
+        en: "A swirling nocturnal sky above the village of Saint-Rémy-de-Provence."
+      },
       url: "./art/starry_night.jpeg"
     },
     {
-      title: "Mona Lisa",
-      artist: "Leonardo da Vinci · c. 1503–1519",
-      desc: "The world's most visited and most written about work of art.",
+      title: {
+        cz: "Mona Lisa",
+        en: "Mona Lisa"
+      },
+      artist: {
+        cz: "Leonardo da Vinci · cca 1503–1519",
+        en: "Leonardo da Vinci · c. 1503–1519"
+      },
+      desc: {
+        cz: "Nejnavštěvovanější a nejvíce popisované umělecké dílo na světě.",
+        en: "The world's most visited and most written about work of art."
+      },
       url: "./art/mona_lisa.jpg"
     },
     {
-      title: "The Last Supper",
-      artist: "Leonardo da Vinci · 1495–1498",
-      desc: "Christ's final meal with the Apostles, painted on a Milan refectory wall.",
+      title: {
+        cz: "Poslední večeře",
+        en: "The Last Supper"
+      },
+      artist: {
+        cz: "Leonardo da Vinci · 1495–1498",
+        en: "Leonardo da Vinci · 1495–1498"
+      },
+      desc: {
+        cz: "Kristova poslední večeře s apoštoly namalovaná na stěně milánského refektáře.",
+        en: "Christ's final meal with the Apostles, painted on a Milan refectory wall."
+      },
       url: "./art/last_supper.jpg"
     },
     {
-      title: "The Scream",
-      artist: "Edvard Munch · 1893",
-      desc: "An agonised figure against a blood-red sky — an icon of existential dread.",
+      title: {
+        cz: "Výkřik",
+        en: "The Scream"
+      },
+      artist: {
+        cz: "Edvard Munch · 1893",
+        en: "Edvard Munch · 1893"
+      },
+      desc: {
+        cz: "Úzkostí sevřená postava pod krvavě rudou oblohou — ikona existenciálního děsu.",
+        en: "An agonised figure against a blood-red sky — an icon of existential dread."
+      },
       url: "./art/the_scream.jpg"
     },
     {
-      title: "The Birth of Venus",
-      artist: "Sandro Botticelli · c. 1484–1486",
-      desc: "The goddess of love emerges from the sea, born fully grown from seafoam.",
+      title: {
+        cz: "Zrození Venuše",
+        en: "The Birth of Venus"
+      },
+      artist: {
+        cz: "Sandro Botticelli · cca 1484–1486",
+        en: "Sandro Botticelli · c. 1484–1486"
+      },
+      desc: {
+        cz: "Bohyně lásky vystupuje z moře, zrozená z mořské pěny.",
+        en: "The goddess of love emerges from the sea, born fully grown from seafoam."
+      },
       url: "./art/venus.webp"
     },
     {
-      title: "Girl with a Pearl Earring",
-      artist: "Johannes Vermeer · c. 1665",
-      desc: "Often called the 'Mona Lisa of the North' for its quiet, luminous mystery.",
+      title: {
+        cz: "Dívka s perlou",
+        en: "Girl with a Pearl Earring"
+      },
+      artist: {
+        cz: "Johannes Vermeer · cca 1665",
+        en: "Johannes Vermeer · c. 1665"
+      },
+      desc: {
+        cz: "Často nazývaná „Mona Lisa severu“ pro své tiché a zářivé tajemství.",
+        en: "Often called the 'Mona Lisa of the North' for its quiet, luminous mystery."
+      },
       url: "./art/girl_with_earring.jpg"
     }
   ];
@@ -311,7 +392,7 @@
     fr.style.setProperty('--ratio', 1);
     const img = document.createElement('img');
     img.src = paintings[idx].url;
-    img.alt = paintings[idx].title;
+    img.alt = paintings[idx].title[currentLang];
     img.addEventListener('load', () => applyNaturalRatio(fr, img));
     if (img.complete) {
       applyNaturalRatio(fr, img);
@@ -333,14 +414,26 @@
   const infoTitle  = document.getElementById('info-title');
   const infoArtist = document.getElementById('info-artist');
   const infoDesc   = document.getElementById('info-desc');
+  const langToggle = document.getElementById('langToggle');
 
   function updateInfo(idx) {
     infoPanel.classList.add('fading');
     setTimeout(() => {
       const p = paintings[idx];
-      infoTitle.textContent  = p.title;
-      infoArtist.textContent = p.artist;
-      infoDesc.textContent   = p.desc;
+      infoTitle.textContent  = p.title[currentLang];
+      infoArtist.textContent = p.artist[currentLang];
+      infoDesc.textContent   = p.desc[currentLang];
+      document.documentElement.lang = currentLang;
+      [frameLeft, frameCenter, frameRight].forEach((frame) => {
+        if (!frame) return;
+        const idxStr = frame.dataset.idx;
+        if (idxStr === undefined) return;
+        const painting = paintings[Number(idxStr)];
+        const image = frame.querySelector('img');
+        if (painting && image) {
+          image.alt = painting.title[currentLang];
+        }
+      });
       infoPanel.classList.remove('fading');
     }, 300);
   }
@@ -413,6 +506,12 @@
 
   document.getElementById('btn-left').addEventListener('click',  () => navigate(-1));
   document.getElementById('btn-right').addEventListener('click', () => navigate(1));
+
+  langToggle.addEventListener('click', () => {
+    currentLang = currentLang === 'cz' ? 'en' : 'cz';
+    localStorage.setItem(LANG_KEY, currentLang);
+    updateInfo(centerIdx);
+  });
 
   // Keyboard support
   document.addEventListener('keydown', e => {
