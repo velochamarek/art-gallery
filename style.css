@@ -61,3 +61,16 @@ body {
   color: white;
   padding: 50px;
 }
+.museum-btn {
+  position: relative;
+  padding: 16px 40px;
+  font-size: 18px;
+  color: white;
+  background: #0f172a;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  overflow: hidden;
+  letter-spacing: 1px;
+}
+

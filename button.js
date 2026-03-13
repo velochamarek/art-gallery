@@ -1,6 +1,16 @@
+const obrazy = document.querySelectorAll(".obrazy");
+
+obrazy.forEach(el => {
+  el.addEventListener("click", () => {
+    window.location.href = "index_mistnost.html"; // otevře jiný index/html
+  });
+});
+
 const btn = document.getElementById("enterBtn");
 const landing = document.getElementById("landing");
 
-btn.addEventListener("click", () => {
-  landing.classList.add("slide-up");
-});
+if (btn && landing) {
+  btn.addEventListener("click", () => {
+    landing.classList.add("slide-up");
+  });
+}
