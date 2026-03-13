@@ -4,228 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Museum Gallery</title>
+  <link rel="stylesheet" href="style2.css">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background: #1A1C2E;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Montserrat', sans-serif;
-      overflow: hidden;
-      color: #E8E2D0;
-    }
-
-    /* ── Wall ── */
-    #wall {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(ellipse 420px 520px at 50% 45%, rgba(201,168,76,0.08) 0%, transparent 70%), #1A1C2E;
-      transition: background 0.55s cubic-bezier(0.77,0,0.175,1);
-    }
-
-    /* ── Stage (the three visible frames) ── */
-    #stage {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 40px;
-      height: 100vh;
-    }
-
-    /* ── Frame base ── */
-    .frame {
-      position: relative;
-      --ratio: 1;
-      flex-shrink: 0;
-      aspect-ratio: var(--ratio);
-      border: none;
-      box-shadow: 0 20px 80px rgba(0,0,0,0.95);
-      background: transparent;
-      overflow: hidden;
-      cursor: pointer;
-      transition: all 0.55s cubic-bezier(0.77,0,0.175,1);
-    }
-
-    .frame img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      transition: all 0.55s cubic-bezier(0.77,0,0.175,1);
-      pointer-events: none;
-      user-select: none;
-    }
-
-    /* ── Slot states ── */
-    .frame.slot-center {
-      width: 380px;
-      max-width: 720px;
-      transform: scale(1) translateX(0);
-      filter: brightness(1) blur(0px);
-      z-index: 3;
-      box-shadow:
-        0 0 60px 20px  rgba(255, 245, 210, 0.18),
-        0 0 140px 60px rgba(255, 235, 180, 0.08),
-        0 40px 120px   rgba(0, 0, 0, 0.95),
-        0 0 0 2px      rgba(255, 245, 210, 0.12);
-    }
-
-    .frame.slot-left {
-      width: 220px;
-      max-width: 360px;
-      transform: scale(0.85) translateX(0);
-      filter: brightness(0.35) blur(1px);
-      z-index: 2;
-    }
-
-    .frame.slot-right {
-      width: 220px;
-      max-width: 360px;
-      transform: scale(0.85) translateX(0);
-      filter: brightness(0.35) blur(1px);
-      z-index: 2;
-    }
-
-    .frame.landscape.slot-center {
-      width: 650px;
-      max-width: 78vw;
-    }
-
-    .frame.landscape.slot-left,
-    .frame.landscape.slot-right {
-      width: 320px;
-      max-width: 30vw;
-    }
-
-    /* ── Off-screen states (for wrap animation) ── */
-    .frame.exit-left {
-      width: 220px;
-      max-width: 360px;
-      transform: scale(0.7) translateX(-120px);
-      opacity: 0;
-      filter: brightness(0.1) blur(3px);
-      box-shadow: 0 20px 80px rgba(0,0,0,0.95);
-      pointer-events: none;
-    }
-
-    .frame.exit-right {
-      width: 220px;
-      max-width: 360px;
-      transform: scale(0.7) translateX(120px);
-      opacity: 0;
-      filter: brightness(0.1) blur(3px);
-      box-shadow: 0 20px 80px rgba(0,0,0,0.95);
-      pointer-events: none;
-    }
-
-    .frame.enter-from-right {
-      width: 220px;
-      max-width: 360px;
-      transform: scale(0.7) translateX(120px);
-      opacity: 0;
-      filter: brightness(0.1) blur(3px);
-      box-shadow: 0 20px 80px rgba(0,0,0,0.95);
-      pointer-events: none;
-    }
-
-    .frame.enter-from-left {
-      width: 220px;
-      max-width: 360px;
-      transform: scale(0.7) translateX(-120px);
-      opacity: 0;
-      filter: brightness(0.1) blur(3px);
-      box-shadow: 0 20px 80px rgba(0,0,0,0.95);
-      pointer-events: none;
-    }
-
-    .frame.landscape.exit-left,
-    .frame.landscape.exit-right,
-    .frame.landscape.enter-from-right,
-    .frame.landscape.enter-from-left {
-      width: 320px;
-      max-width: 30vw;
-    }
-
-    /* ── Arrows ── */
-    .arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 10;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      border: 1px solid #4A5570;
-      background: rgba(255,255,255,0.07);
-      color: #E8E2D0;
-      font-size: 20px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: border-color 0.3s, color 0.3s, background 0.3s;
-      user-select: none;
-    }
-
-    .arrow:hover {
-      border-color: #C9A84C;
-      color: #C9A84C;
-      background: rgba(201,168,76,0.08);
-    }
-
-    #btn-left  { left: 32px; }
-    #btn-right { right: 32px; }
-
-    /* ── Info panel ── */
-    #info-panel {
-      position: absolute;
-      bottom: 9%;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      z-index: 10;
-      transition: opacity 0.3s ease;
-    }
-
-    #info-panel.fading { opacity: 0; }
-
-    #info-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.55rem;
-      font-weight: 300;
-      letter-spacing: 0.06em;
-      color: #E8E2D0;
-      margin-bottom: 4px;
-    }
-
-    #info-artist {
-      font-size: 0.78rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #8A9BB5;
-      margin-bottom: 6px;
-    }
-
-    #info-desc {
-      font-size: 0.74rem;
-      color: #4A5570;
-      letter-spacing: 0.04em;
-    }
-  </style>
 </head>
 <body>
+
+<button id="langToggle" class="lang-toggle" type="button">CZ / EN</button>
 
 <div id="wall">
 
@@ -245,41 +31,98 @@
 </div>
 
 <script>
+  const LANG_KEY = "museumLang";
+  let currentLang = localStorage.getItem(LANG_KEY) === "en" ? "en" : "cz";
+
   const paintings = [
     {
-      title: "The Starry Night",
-      artist: "Vincent van Gogh · 1889",
-      desc: "A swirling nocturnal sky above the village of Saint-Rémy-de-Provence.",
+      title: {
+        cz: "Hvězdná noc",
+        en: "The Starry Night"
+      },
+      artist: {
+        cz: "Vincent van Gogh · 1889",
+        en: "Vincent van Gogh · 1889"
+      },
+      desc: {
+        cz: "Vířící noční obloha nad vesnicí Saint-Rémy-de-Provence.",
+        en: "A swirling nocturnal sky above the village of Saint-Rémy-de-Provence."
+      },
       url: "./art/starry_night.jpeg"
     },
     {
-      title: "Mona Lisa",
-      artist: "Leonardo da Vinci · c. 1503–1519",
-      desc: "The world's most visited and most written about work of art.",
+      title: {
+        cz: "Mona Lisa",
+        en: "Mona Lisa"
+      },
+      artist: {
+        cz: "Leonardo da Vinci · cca 1503–1519",
+        en: "Leonardo da Vinci · c. 1503–1519"
+      },
+      desc: {
+        cz: "Nejnavštěvovanější a nejvíce popisované umělecké dílo na světě.",
+        en: "The world's most visited and most written about work of art."
+      },
       url: "./art/mona_lisa.jpg"
     },
     {
-      title: "The Last Supper",
-      artist: "Leonardo da Vinci · 1495–1498",
-      desc: "Christ's final meal with the Apostles, painted on a Milan refectory wall.",
+      title: {
+        cz: "Poslední večeře",
+        en: "The Last Supper"
+      },
+      artist: {
+        cz: "Leonardo da Vinci · 1495–1498",
+        en: "Leonardo da Vinci · 1495–1498"
+      },
+      desc: {
+        cz: "Kristova poslední večeře s apoštoly namalovaná na stěně milánského refektáře.",
+        en: "Christ's final meal with the Apostles, painted on a Milan refectory wall."
+      },
       url: "./art/last_supper.jpg"
     },
     {
-      title: "The Scream",
-      artist: "Edvard Munch · 1893",
-      desc: "An agonised figure against a blood-red sky — an icon of existential dread.",
+      title: {
+        cz: "Výkřik",
+        en: "The Scream"
+      },
+      artist: {
+        cz: "Edvard Munch · 1893",
+        en: "Edvard Munch · 1893"
+      },
+      desc: {
+        cz: "Úzkostí sevřená postava pod krvavě rudou oblohou — ikona existenciálního děsu.",
+        en: "An agonised figure against a blood-red sky — an icon of existential dread."
+      },
       url: "./art/the_scream.jpg"
     },
     {
-      title: "The Birth of Venus",
-      artist: "Sandro Botticelli · c. 1484–1486",
-      desc: "The goddess of love emerges from the sea, born fully grown from seafoam.",
+      title: {
+        cz: "Zrození Venuše",
+        en: "The Birth of Venus"
+      },
+      artist: {
+        cz: "Sandro Botticelli · cca 1484–1486",
+        en: "Sandro Botticelli · c. 1484–1486"
+      },
+      desc: {
+        cz: "Bohyně lásky vystupuje z moře, zrozená z mořské pěny.",
+        en: "The goddess of love emerges from the sea, born fully grown from seafoam."
+      },
       url: "./art/venus.webp"
     },
     {
-      title: "Girl with a Pearl Earring",
-      artist: "Johannes Vermeer · c. 1665",
-      desc: "Often called the 'Mona Lisa of the North' for its quiet, luminous mystery.",
+      title: {
+        cz: "Dívka s perlou",
+        en: "Girl with a Pearl Earring"
+      },
+      artist: {
+        cz: "Johannes Vermeer · cca 1665",
+        en: "Johannes Vermeer · c. 1665"
+      },
+      desc: {
+        cz: "Často nazývaná „Mona Lisa severu“ pro své tiché a zářivé tajemství.",
+        en: "Often called the 'Mona Lisa of the North' for its quiet, luminous mystery."
+      },
       url: "./art/girl_with_earring.jpg"
     }
   ];
@@ -311,7 +154,7 @@
     fr.style.setProperty('--ratio', 1);
     const img = document.createElement('img');
     img.src = paintings[idx].url;
-    img.alt = paintings[idx].title;
+    img.alt = paintings[idx].title[currentLang];
     img.addEventListener('load', () => applyNaturalRatio(fr, img));
     if (img.complete) {
       applyNaturalRatio(fr, img);
@@ -333,14 +176,26 @@
   const infoTitle  = document.getElementById('info-title');
   const infoArtist = document.getElementById('info-artist');
   const infoDesc   = document.getElementById('info-desc');
+  const langToggle = document.getElementById('langToggle');
 
   function updateInfo(idx) {
     infoPanel.classList.add('fading');
     setTimeout(() => {
       const p = paintings[idx];
-      infoTitle.textContent  = p.title;
-      infoArtist.textContent = p.artist;
-      infoDesc.textContent   = p.desc;
+      infoTitle.textContent  = p.title[currentLang];
+      infoArtist.textContent = p.artist[currentLang];
+      infoDesc.textContent   = p.desc[currentLang];
+      document.documentElement.lang = currentLang;
+      [frameLeft, frameCenter, frameRight].forEach((frame) => {
+        if (!frame) return;
+        const idxStr = frame.dataset.idx;
+        if (idxStr === undefined) return;
+        const painting = paintings[Number(idxStr)];
+        const image = frame.querySelector('img');
+        if (painting && image) {
+          image.alt = painting.title[currentLang];
+        }
+      });
       infoPanel.classList.remove('fading');
     }, 300);
   }
@@ -413,6 +268,12 @@
 
   document.getElementById('btn-left').addEventListener('click',  () => navigate(-1));
   document.getElementById('btn-right').addEventListener('click', () => navigate(1));
+
+  langToggle.addEventListener('click', () => {
+    currentLang = currentLang === 'cz' ? 'en' : 'cz';
+    localStorage.setItem(LANG_KEY, currentLang);
+    updateInfo(centerIdx);
+  });
 
   // Keyboard support
   document.addEventListener('keydown', e => {
