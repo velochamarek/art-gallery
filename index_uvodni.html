@@ -200,6 +200,7 @@
 
     enterBtn.addEventListener("click", () => {
       enterBtn.disabled = true;
+      localStorage.setItem("audioAllowed", "yes");
       heroContent.classList.add("exit");
       setTimeout(() => {
         window.location.href = "index_mistnost.html";
