@@ -1,26 +1,6 @@
 // --- LOGIKA MENU A PANELŮ ---
 //kuirzor
 const kurzor = document.getElementById("kurzor");
-        // Tento řádek zajistí, že se při každém načtení/refreshi smaže uložená verze
-localStorage.removeItem("editedMonaLisa");
-
-// Pokud bys chtěl navigaci řešit přes JS (nepovinné, pokud máš v HTML <a>)
-const backBtn = document.querySelector(".back-btn");
-if (backBtn) {
-    backBtn.onclick = () => {
-        window.location.href = "index.html"; // Sem dej název svého hlavního souboru
-    };
-}
-        
-        // --- LOGIKA MENU A PANELŮ ---
-        const menu = document.getElementById("sideMenu");
-        document.getElementById("openMenu").onclick = () => {
-            menu.classList.add("open");
-        };
-        document.getElementById("closeMenu").onclick = () => {
-            menu.classList.remove("open");
-            document.querySelectorAll(".panel").forEach(p => p.classList.add("hidden"));
-        };
 
 document.addEventListener("mousemove", (e) => {
   kurzor.style.left = (e.pageX -200) + "px";
