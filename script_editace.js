@@ -1,3 +1,14 @@
+        // Tento řádek zajistí, že se při každém načtení/refreshi smaže uložená verze
+localStorage.removeItem("editedMonaLisa");
+
+// Pokud bys chtěl navigaci řešit přes JS (nepovinné, pokud máš v HTML <a>)
+const backBtn = document.querySelector(".back-btn");
+if (backBtn) {
+    backBtn.onclick = () => {
+        window.location.href = "index.html"; // Sem dej název svého hlavního souboru
+    };
+}
+        
         // --- LOGIKA MENU A PANELŮ ---
         const menu = document.getElementById("sideMenu");
         document.getElementById("openMenu").onclick = () => {

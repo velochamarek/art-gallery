@@ -31,6 +31,23 @@
 </div>
 
 <script>
+ let backgroundBanger = new Audio("./pozadi/gildedFramesAtDusk.mp3");
+backgroundBanger.volume = 0.4;
+backgroundBanger.loop = true;
+
+// Zkontrolujeme, jestli uživatel kliknul na předchozí stránce
+if (localStorage.getItem("audioAllowed") === "yes") {
+  backgroundBanger.play();
+  // Po spuštění to smažeme, ať se to nespouští znovu při refreshi
+  localStorage.removeItem("audioAllowed");
+} else {
+  // fallback – kdyby někdo přišel přímo na stránku
+  document.addEventListener("click", () => {
+    backgroundBanger.play();
+  }, { once: true });
+}
+
+
   const LANG_KEY = "museumLang";
   let currentLang = localStorage.getItem(LANG_KEY) === "en" ? "en" : "cz";
 
@@ -154,6 +171,7 @@
     fr.style.setProperty('--ratio', 1);
     const img = document.createElement('img');
     img.src = paintings[idx].url;
+    img.className = "obrazy";
     img.alt = paintings[idx].title[currentLang];
     img.addEventListener('load', () => applyNaturalRatio(fr, img));
     if (img.complete) {
@@ -281,6 +299,6 @@
     if (e.key === 'ArrowLeft')  navigate(-1);
   });
 </script>
-
+<script src="./script_obraz.js"></script>
 </body>
 </html>
