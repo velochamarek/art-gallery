@@ -21,7 +21,7 @@ h1{
     border-radius: 50px;
 }
 img {
-  transform: rotateX(20deg) rotateY(15deg);
+  transform: rotateX(30deg) rotateY(40deg);
   transform-style: preserve-3d; /* důležité pro 3D efekt */
   transition: transform 0.3s ease; /* hezká animace */
 }
