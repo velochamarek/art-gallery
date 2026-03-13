@@ -11,8 +11,13 @@
 </head>
 <body>
     <div id="obal_nav">
-        <button onclick="window.location.href='editace.html'" class="kreslit">Kreslit</button>
-        <button id="langToggle" class="lang-toggle" type="button">CZ / EN</button>
+      <button onclick="window.location.href='editace.html'" class="kreslit">Kreslit</button>
+      <button type="button" class="moje-galerie">Moje galerie</button>
+      <button id="langToggle" class="lang-toggle" type="button" aria-label="Switch language CZ/EN">
+        <span class="lang-thumb" aria-hidden="true"></span>
+        <span class="lang-option cz">CZ</span>
+        <span class="lang-option en">EN</span>
+      </button>
     </div>
 
 
@@ -55,7 +60,7 @@ if (localStorage.getItem("audioAllowed") === "yes") {
   const paintings = [
     {
       title: {
-        cz: "Hvězdná prdelka",
+        cz: "Hvězdná noc",
         en: "The Starry Night"
       },
       artist: {
@@ -196,6 +201,21 @@ if (localStorage.getItem("audioAllowed") === "yes") {
   const infoArtist = document.getElementById('info-artist');
   const infoDesc   = document.getElementById('info-desc');
   const langToggle = document.getElementById('langToggle');
+  const drawBtn = document.querySelector('.kreslit');
+  const myGalleryBtn = document.querySelector('.moje-galerie');
+
+  function syncLangToggleState() {
+    langToggle.classList.toggle('is-en', currentLang === 'en');
+  }
+
+  function syncNavButtonLabels() {
+    if (drawBtn) {
+      drawBtn.textContent = currentLang === 'en' ? 'Draw' : 'Kreslit';
+    }
+    if (myGalleryBtn) {
+      myGalleryBtn.textContent = currentLang === 'en' ? 'My Gallery' : 'Moje galerie';
+    }
+  }
 
   function updateInfo(idx) {
     infoPanel.classList.add('fading');
@@ -205,6 +225,8 @@ if (localStorage.getItem("audioAllowed") === "yes") {
       infoArtist.textContent = p.artist[currentLang];
       infoDesc.textContent   = p.desc[currentLang];
       document.documentElement.lang = currentLang;
+      syncLangToggleState();
+      syncNavButtonLabels();
       [frameLeft, frameCenter, frameRight].forEach((frame) => {
         if (!frame) return;
         const idxStr = frame.dataset.idx;
