@@ -1,3 +1,24 @@
+.back-btn {
+    position: fixed;
+    top: 20px;
+    left: 160px; /* Aby se netlouklo s tlačítkem Otevřít Menu */
+    padding: 12px 16px;
+    background: #444;
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 1100;
+    font-family: Arial, sans-serif;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.back-btn:hover {
+    background: #664;
+}
+        
         body {
             /* Tmavé muzejní pozadí */
             background-color: #1a1a1a;
