@@ -65,6 +65,7 @@ if (savedTitle) {
 }
 
 img.onload = () => {
+<<<<<<< HEAD
     const ratio = img.naturalWidth / img.naturalHeight;
 
     // Šířku necháme klidně na 60 % okna, ale VÝŠKU u portrétů vytáhneme na 80 %
@@ -81,8 +82,49 @@ img.onload = () => {
         canvas.height = canvas.width / ratio;
     }
 
+=======
+    // --- Dynamická velikost canvasu podle obrazu ---
+    const ratio = img.naturalWidth / img.naturalHeight; // šířka / výška
+    const maxWidth = window.innerWidth * 0.5;  // půlka stránky pro šířku
+    const maxHeight = window.innerHeight * 0.5; // půlka pro výšku
+    const extraHeightFactor = 1.7; // jak moc chceme vysoké obrazy zvětšit
+
+    if (ratio >= 1) {
+        // Široký obraz → omezíme podle šířky
+        canvas.width = maxWidth;
+        canvas.height = canvas.width / ratio;
+    } else {
+        // Vysoký obraz → zvětšíme podle výšky
+        canvas.height = maxHeight * extraHeightFactor;
+        canvas.width = canvas.height * ratio;
+
+        // Ale aby se nevešel mimo obrazovku, omezení:
+        if (canvas.width > window.innerWidth * 0.8) {
+            canvas.width = window.innerWidth * 0.8;
+            canvas.height = canvas.width / ratio;
+        }
+    }
+
+    // --- Vyčistit canvas před novým obrazem ---
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // --- Nakreslit nový obraz ---
+>>>>>>> 6e5fdc0e770f61e0897f6a5a57ecda817c01f6f1
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    loadImage();
+
+    // --- Načtení starého uloženého obrázku jen pokud je stejné dílo ---
+    const saved = localStorage.getItem("editedMonaLisa");
+    const savedArt = localStorage.getItem("currentPainting");
+    if (saved && savedArt === img.src) {
+        const image = new Image();
+        image.src = saved;
+        image.onload = () => {
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+        }
+    }
+
+    // --- Uložíme aktuální obrázek jako "currentPainting" ---
+    localStorage.setItem("currentPainting", img.src);
 };
 
 function startPosition(e) {
