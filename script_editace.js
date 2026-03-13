@@ -65,8 +65,8 @@ if (savedTitle) {
 }
 
 img.onload = () => {
+    // --- Dynamická velikost canvasu podle obrazu ---
     const ratio = img.naturalWidth / img.naturalHeight; // šířka / výška
-
     const maxWidth = window.innerWidth * 0.5;  // půlka stránky pro šířku
     const maxHeight = window.innerHeight * 0.5; // půlka pro výšku
     const extraHeightFactor = 1.7; // jak moc chceme vysoké obrazy zvětšit
@@ -87,8 +87,25 @@ img.onload = () => {
         }
     }
 
+    // --- Vyčistit canvas před novým obrazem ---
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // --- Nakreslit nový obraz ---
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    loadImage();
+
+    // --- Načtení starého uloženého obrázku jen pokud je stejné dílo ---
+    const saved = localStorage.getItem("editedMonaLisa");
+    const savedArt = localStorage.getItem("currentPainting");
+    if (saved && savedArt === img.src) {
+        const image = new Image();
+        image.src = saved;
+        image.onload = () => {
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+        }
+    }
+
+    // --- Uložíme aktuální obrázek jako "currentPainting" ---
+    localStorage.setItem("currentPainting", img.src);
 };
 
 function startPosition(e) {
