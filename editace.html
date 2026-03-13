@@ -10,14 +10,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Lavishly+Yours&display=swap" rel="stylesheet">
 </head>
 <body>
-
-    <audio id="lobbyMusic" loop>
-        <source src="./pozadi/Gilded Frames at Dusk.mp3" type="audio/mpeg">
-    </audio>
-
-    <button id="openMenu" class="open-btn">Otevřít Menu</button>
-    <a href="index_mistnost.html" class="back-btn">Zpět do menu</a>
-
+    <img src="./images/kurzorStetec.png" id="kurzor">
+    <div id="obal_nav">
+        <button id="openMenu" class="open-btn">Otevřít Menu</button>
+        <button onclick="window.location.href='index_mistnost.html'" class="kreslit">Zpět na výběr</button>
+    </div>
     <div id="sideMenu" class="menu">
         <button id="closeMenu" class="close-btn">&times;</button>
         <button class="menu-item" data-panel="info">Info o obrazu</button>

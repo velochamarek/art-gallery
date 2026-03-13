@@ -10,8 +10,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400&display=swap" rel="stylesheet" />
 </head>
 <body>
+    <div id="obal_nav">
+        <button onclick="window.location.href='editace.html'" class="kreslit">Kreslit</button>
+        <button id="langToggle" class="lang-toggle" type="button">CZ / EN</button>
+    </div>
 
-<button id="langToggle" class="lang-toggle" type="button">CZ / EN</button>
 
 <div id="wall">
 
@@ -31,23 +34,6 @@
 </div>
 
 <script>
- let backgroundBanger = new Audio("./pozadi/gildedFramesAtDusk.mp3");
-backgroundBanger.volume = 0.4;
-backgroundBanger.loop = true;
-
-// Zkontrolujeme, jestli uživatel kliknul na předchozí stránce
-if (localStorage.getItem("audioAllowed") === "yes") {
-  backgroundBanger.play();
-  // Po spuštění to smažeme, ať se to nespouští znovu při refreshi
-  localStorage.removeItem("audioAllowed");
-} else {
-  // fallback – kdyby někdo přišel přímo na stránku
-  document.addEventListener("click", () => {
-    backgroundBanger.play();
-  }, { once: true });
-}
-
-
   const LANG_KEY = "museumLang";
   let currentLang = localStorage.getItem(LANG_KEY) === "en" ? "en" : "cz";
 
@@ -171,8 +157,8 @@ if (localStorage.getItem("audioAllowed") === "yes") {
     fr.style.setProperty('--ratio', 1);
     const img = document.createElement('img');
     img.src = paintings[idx].url;
-    img.className = "obrazy";
     img.alt = paintings[idx].title[currentLang];
+
     img.addEventListener('load', () => applyNaturalRatio(fr, img));
     if (img.complete) {
       applyNaturalRatio(fr, img);
@@ -215,7 +201,7 @@ if (localStorage.getItem("audioAllowed") === "yes") {
         }
       });
       infoPanel.classList.remove('fading');
-    }, 400);
+    }, 300);
   }
 
   updateInfo(centerIdx);
@@ -256,7 +242,7 @@ if (localStorage.getItem("audioAllowed") === "yes") {
         rightIdx    = nextRight;
         updateInfo(centerIdx);
         animating = false;
-      }, 220);
+      }, 600);
 
     } else {
       // ← left: center exits right, left becomes center, new frame enters from left
@@ -280,7 +266,7 @@ if (localStorage.getItem("audioAllowed") === "yes") {
         rightIdx    = nextRight;
         updateInfo(centerIdx);
         animating = false;
-      }, 220);
+      }, 600);
     }
   }
 
@@ -299,6 +285,5 @@ if (localStorage.getItem("audioAllowed") === "yes") {
     if (e.key === 'ArrowLeft')  navigate(-1);
   });
 </script>
-<script src="./script_obraz.js"></script>
 </body>
 </html>

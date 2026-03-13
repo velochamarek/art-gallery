@@ -1,97 +1,127 @@
-.back-btn {
-    position: fixed;
-    top: 20px;
-    left: 160px; /* Aby se netlouklo s tlačítkem Otevřít Menu */
-    padding: 12px 16px;
-    background: #444;
-    border: none;
+body {
+    /* Tmavé muzejní pozadí */
+    background-color: #1a1a1a;
+    margin: 0;
+    font-family: "Lavishly Yours", cursive, sans-serif;
     color: white;
-    font-weight: bold;
-    border-radius: 6px;
-    cursor: pointer;
-    z-index: 1100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    cursor: none;
+}
+#kurzor{
+  position: fixed;
+  pointer-events: none;
+  z-index: 10;
+}
+/* MENU */
+.menu {
+    position: fixed;
+    right: -300px; /* Skryté menu mimo obrazovku */
+    top: 0;
+    width: 260px;
+    height: 100vh;
+    background: #222;
+    padding: 20px;
+    box-shadow: -4px 0 10px rgba(0,0,0,0.5);
+    transition: right 0.3s ease;
+    z-index: 1000;
+}
+.menu.open { right: 0; }
+
+.menu-item {
+    width: 100%; padding: 12px; margin: 10px 0;
+    background: #333; border: 1px solid #444; color: white;
+    cursor: pointer; border-radius: 6px; transition: background 0.2s;
     font-family: Arial, sans-serif;
-    text-decoration: none;
-    transition: background 0.2s;
+}
+.menu-item:hover { background: #bd8c38; color: black; font-weight: bold; }
+.menu-item#saveImage { background: #15626a; }
+#obal_nav{
+    position: fixed;
+    top: 12px;
+    left: 30px;
+    z-index: 25;
+    width: 250px;
+    height: 40px;
+    border: 1px solid #6f738d;
+    border-radius: 999px;
+    background: rgba(45, 49, 73, 0.75);
+    color: #8A9BB5;
+}
+.kreslit{
+    position: fixed;
+    top: 18px;
+    left: 160px;
+    z-index: 25;
+    border: 1px solid #2E3250;
+    border-radius: 999px;
+    background: rgba(31, 34, 54, 0.75);
+    color: #8A9BB5;
+    padding: 6px 12px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: border-color 0.25s ease, color 0.25s ease;
+    font-family: 'Montserrat', sans-serif;
 }
 
-.back-btn:hover {
-    background: #664;
+.kreslit:hover {
+    border-color: #C9A84C;
+    color: #C9A84C;
 }
-        
-        body {
-            /* Tmavé muzejní pozadí */
-            background-color: #1a1a1a;
-            margin: 0;
-            font-family: "Lavishly Yours", cursive, sans-serif;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
+.open-btn:hover{
+    border-color: #C9A84C;
+    color: #C9A84C;
+}
+.open-btn {
+    position: fixed;
+    top: 18px;
+    left: 40px;
+    z-index: 25;
+    border: 1px solid #2E3250;
+    border-radius: 999px;
+    background: rgba(31, 34, 54, 0.75);
+    color: #8A9BB5;
+    padding: 6px 12px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: border-color 0.25s ease, color 0.25s ease;
+    font-family: 'Montserrat', sans-serif;
+}
 
-        /* MENU */
-        .menu {
-            position: fixed;
-            right: -300px; /* Skryté menu mimo obrazovku */
-            top: 0;
-            width: 260px;
-            height: 100vh;
-            background: #222;
-            padding: 20px;
-            box-shadow: -4px 0 10px rgba(0,0,0,0.5);
-            transition: right 0.3s ease;
-            z-index: 1000;
-        }
-        .menu.open { right: 0; }
+.close-btn {
+    background: none; border: none; color: white;
+    font-size: 28px; cursor: pointer; float: right; margin-bottom: 20px;
+}
 
-        .menu-item {
-            width: 100%; padding: 12px; margin: 10px 0;
-            background: #333; border: 1px solid #444; color: white;
-            cursor: pointer; border-radius: 6px; transition: background 0.2s;
-            font-family: Arial, sans-serif;
-        }
-        .menu-item:hover { background: #bd8c38; color: black; font-weight: bold; }
-        .menu-item#saveImage { background: #15626a; }
+/* PANELY */
+.panel {
+    position: fixed; right: 320px; top: 20px; width: 300px; padding: 20px;
+    background: #222; border-radius: 10px; border: 1px solid #bd8c38;
+    box-shadow: 0 0 20px rgba(0,0,0,0.6); z-index: 900;
+    font-family: Arial, sans-serif;
+}
+.hidden { display: none; }
 
-        .open-btn {
-            position: fixed; top: 20px; left: 20px;
-            padding: 12px 16px; background: #bd8c38; border: none;
-            color: black; font-weight: bold; border-radius: 6px;
-            cursor: pointer; z-index: 1100; font-family: Arial, sans-serif;
-        }
+.style-btn, #clearCanvas {
+    display: block; width: 100%; padding: 8px; margin: 5px 0;
+    background: #444; border: none; color: white; cursor: pointer; border-radius: 4px;
+}
+.style-btn:hover, #clearCanvas:hover { background: #666; }
 
-        .close-btn {
-            background: none; border: none; color: white;
-            font-size: 28px; cursor: pointer; float: right; margin-bottom: 20px;
-        }
-
-        /* PANELY */
-        .panel {
-            position: fixed; right: 320px; top: 20px; width: 300px; padding: 20px;
-            background: #222; border-radius: 10px; border: 1px solid #bd8c38;
-            box-shadow: 0 0 20px rgba(0,0,0,0.6); z-index: 900;
-            font-family: Arial, sans-serif;
-        }
-        .hidden { display: none; }
-
-        .style-btn, #clearCanvas {
-            display: block; width: 100%; padding: 8px; margin: 5px 0;
-            background: #444; border: none; color: white; cursor: pointer; border-radius: 4px;
-        }
-        .style-btn:hover, #clearCanvas:hover { background: #666; }
-
-        /* CANVAS */
-        .canvas-container {
-            border: 8px solid #bd8c38;
-            border-radius: 4px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            background: #000;
-        }
-        #canvas {
-            display: block;
-            cursor: crosshair;
-            transition: filter 0.3s ease; /* Plynulý přechod pro filtry */
-        }
+/* CANVAS */
+.canvas-container {
+    border: 8px solid #bd8c38;
+    border-radius: 4px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    background: #000;
+}
+#canvas {
+    display: block;
+    cursor: crosshair;
+    transition: filter 0.3s ease; /* Plynulý přechod pro filtry */
+}
