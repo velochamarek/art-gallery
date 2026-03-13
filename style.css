@@ -2,6 +2,9 @@ body {
   margin: 0;
   overflow-x: hidden;
   font-family: "Montserrat", sans-serif;
+  background-image: url("./pozadi/artGallery.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 #landing {
@@ -52,8 +55,46 @@ body {
 }
 
 #gallery {
-  height: 200vh;
+  position: relative;
+  min-height: 200vh;
   background: #111;
   color: white;
   padding: 50px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 250%;
+  color: #eddccd;
+}
+
+#nadpis {
+  position: absolute;
+  top: 2%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  background-color: #15626a;
+  width: fit-content;
+  height: 100px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+}
+
+#main_mistnost {
+  display: flex;
+  justify-content: center;
+  padding-top: 150px;
+}
+
+img {
+  transform: rotateX(20deg) rotateY(15deg);
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+}
+
+img:hover {
+  transform: rotateX(0deg) rotateY(0deg);
 }
