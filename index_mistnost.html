@@ -154,6 +154,7 @@
     fr.style.setProperty('--ratio', 1);
     const img = document.createElement('img');
     img.src = paintings[idx].url;
+    img.className = "obrazy";
     img.alt = paintings[idx].title[currentLang];
     img.addEventListener('load', () => applyNaturalRatio(fr, img));
     if (img.complete) {
@@ -281,6 +282,6 @@
     if (e.key === 'ArrowLeft')  navigate(-1);
   });
 </script>
-
+<script src="./script_obraz.js"></script>
 </body>
 </html>
