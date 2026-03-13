@@ -3,8 +3,8 @@
 const kurzor = document.getElementById("kurzor");
 
 document.addEventListener("mousemove", (e) => {
-  kurzor.style.left = (e.pageX -200) + "px";
-  kurzor.style.top = (e.pageY -200) + "px";
+  kurzor.style.left = (e.pageX -20) + "px";
+  kurzor.style.top = (e.pageY -10) + "px";
 });
 
 

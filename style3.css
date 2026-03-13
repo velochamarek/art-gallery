@@ -15,6 +15,7 @@ body {
   position: fixed;
   pointer-events: none;
   z-index: 10;
+  width: 100px;
 }
 /* MENU */
 .menu {
