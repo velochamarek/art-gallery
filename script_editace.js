@@ -65,6 +65,28 @@ if (savedTitle) {
 }
 
 img.onload = () => {
+    const ratio = img.naturalWidth / img.naturalHeight; // šířka / výška
+
+    const maxWidth = window.innerWidth * 0.5;  // půlka stránky pro šířku
+    const maxHeight = window.innerHeight * 0.5; // půlka pro výšku
+    const extraHeightFactor = 1.7; // jak moc chceme vysoké obrazy zvětšit
+
+    if (ratio >= 1) {
+        // Široký obraz → omezíme podle šířky
+        canvas.width = maxWidth;
+        canvas.height = canvas.width / ratio;
+    } else {
+        // Vysoký obraz → zvětšíme podle výšky
+        canvas.height = maxHeight * extraHeightFactor;
+        canvas.width = canvas.height * ratio;
+
+        // Ale aby se nevešel mimo obrazovku, omezení:
+        if (canvas.width > window.innerWidth * 0.8) {
+            canvas.width = window.innerWidth * 0.8;
+            canvas.height = canvas.width / ratio;
+        }
+    }
+
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     loadImage();
 };
