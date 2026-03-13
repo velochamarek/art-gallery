@@ -65,6 +65,22 @@ if (savedTitle) {
 }
 
 img.onload = () => {
+    const ratio = img.naturalWidth / img.naturalHeight;
+
+    // Šířku necháme klidně na 60 % okna, ale VÝŠKU u portrétů vytáhneme na 80 %
+    const maxWidth = window.innerWidth * 0.6;
+    const maxHeight = window.innerHeight * 0.8; 
+
+    if (maxWidth / maxHeight > ratio) {
+        // Portrét (nebo vysoký obraz) - teď bude mít až 80 % výšky okna
+        canvas.height = maxHeight;
+        canvas.width = canvas.height * ratio;
+    } else {
+        // Krajina (široký obraz) - omezí se šířkou
+        canvas.width = maxWidth;
+        canvas.height = canvas.width / ratio;
+    }
+
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     loadImage();
 };
