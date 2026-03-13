@@ -37,20 +37,57 @@
       top: 18px;
       right: 18px;
       z-index: 20;
+      width: 92px;
+      height: 36px;
       border: 1px solid var(--border);
       border-radius: 999px;
       background: rgba(36, 40, 64, 0.75);
-      color: var(--secondary);
-      padding: 6px 12px;
-      font-size: 12px;
-      letter-spacing: 0.06em;
+      color: var(--text);
+      padding: 0;
       cursor: pointer;
-      transition: border-color 0.25s ease, color 0.25s ease;
+      transition: border-color 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      overflow: hidden;
     }
 
     .lang-toggle:hover {
       border-color: var(--gold);
-      color: var(--gold);
+    }
+
+    .lang-thumb {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 42px;
+      height: 28px;
+      border-radius: 999px;
+      background: var(--gold);
+      transition: transform 0.28s ease;
+    }
+
+    .lang-toggle.is-en .lang-thumb {
+      transform: translateX(44px);
+    }
+
+    .lang-option {
+      position: relative;
+      z-index: 1;
+      width: 46px;
+      text-align: center;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+      color: var(--secondary);
+      transition: color 0.2s ease;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .lang-toggle:not(.is-en) .lang-option.cz,
+    .lang-toggle.is-en .lang-option.en {
+      color: var(--bg);
     }
 
     #hero {
@@ -137,7 +174,11 @@
   </style>
 </head>
 <body>
-  <button id="langToggle" class="lang-toggle" type="button">CZ / EN</button>
+  <button id="langToggle" class="lang-toggle" type="button" aria-label="Switch language CZ/EN">
+    <span class="lang-thumb" aria-hidden="true"></span>
+    <span class="lang-option cz">CZ</span>
+    <span class="lang-option en">EN</span>
+  </button>
 
   <section id="hero">
     <div id="heroContent" class="hero-content intro-start">
@@ -176,6 +217,10 @@
     const langToggle = document.getElementById("langToggle");
     const heroContent = document.getElementById("heroContent");
 
+    function syncLangToggleState() {
+      langToggle.classList.toggle("is-en", currentLang === "en");
+    }
+
     function applyLanguage(lang) {
       const t = texts[lang];
       overlineEl.textContent = t.overline;
@@ -184,6 +229,7 @@
       enterBtn.textContent = t.cta;
       document.documentElement.lang = lang;
       localStorage.setItem(LANG_KEY, lang);
+      syncLangToggleState();
     }
 
     langToggle.addEventListener("click", () => {
