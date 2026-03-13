@@ -1,35 +1,304 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style2.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com"> 
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
-    <link href="https://fonts.googleapis.com/css2?family=Lavishly+Yours&display=swap" rel="stylesheet">
-    
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Museum Gallery</title>
+  <link rel="stylesheet" href="style2.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400&display=swap" rel="stylesheet" />
 </head>
 <body>
-    <div id="nadpis"><h1>Interaktivní muzeum slavných obrazů</h1></div>
-    <div id="main_mistnost">
-        <img class="obrazy obrazy_vlevo" id="adam" src="./art/creation_of_human.jpeg">
-
-        <img class="obrazy" id="holka_nausnice" src="./art/girl_with_earring.jpg">
-
-        <img class="obrazy obrazy_vlevo" id="vlna" src="./art/great_wave.jpg">
-
-        <img class="obrazy obrazy_vlevo" id="vecere" src="./art/last_supper.jpg">
-
-        <img class="obrazy" id="mona_lisa" src="./art/mona_lisa.jpg">
-
-        <img class="obrazy obrazy_vpravo" id="obloha" src="./art/starry_night.jpeg">
-
-        <img class="obrazy obrazy_vpravo" id="rev" src="./art/the_scream.jpg">
-
-        <img class="obrazy obrazy_vpravo" id="venuse" src="./art/venus.webp">
+    <div id="obal_nav">
+        <button onclick="window.location.href='editace.html'" class="kreslit">Kreslit</button>
+        <button id="langToggle" class="lang-toggle" type="button">CZ / EN</button>
     </div>
-    <script src="script_mistnost.js">
-    </script>
+
+
+<div id="wall">
+
+  <button class="arrow" id="btn-left">&#8249;</button>
+  <button class="arrow" id="btn-right">&#8250;</button>
+
+  <div id="stage">
+    <!-- frames injected by JS -->
+  </div>
+
+  <div id="info-panel">
+    <div id="info-title"></div>
+    <div id="info-artist"></div>
+    <div id="info-desc"></div>
+  </div>
+
+</div>
+
+<script>
+let backgroundBanger = new Audio("./pozadi/gildedFramesAtDusk.mp3");
+backgroundBanger.volume = 0.4;
+backgroundBanger.loop = true;
+
+// Zkontrolujeme, jestli uživatel kliknul na předchozí stránce
+if (localStorage.getItem("audioAllowed") === "yes") {
+  backgroundBanger.play();
+  // Po spuštění to smažeme, ať se to nespouští znovu při refreshi
+  localStorage.removeItem("audioAllowed");
+} else {
+  // fallback – kdyby někdo přišel přímo na stránku
+  document.addEventListener("click", () => {
+    backgroundBanger.play();
+  }, { once: true });
+}
+  const LANG_KEY = "museumLang";
+  let currentLang = localStorage.getItem(LANG_KEY) === "en" ? "en" : "cz";
+
+  const paintings = [
+    {
+      title: {
+        cz: "Hvězdná prdelka",
+        en: "The Starry Night"
+      },
+      artist: {
+        cz: "Vincent van Gogh · 1889",
+        en: "Vincent van Gogh · 1889"
+      },
+      desc: {
+        cz: "Vířící noční obloha nad vesnicí Saint-Rémy-de-Provence.",
+        en: "A swirling nocturnal sky above the village of Saint-Rémy-de-Provence."
+      },
+      url: "./art/starry_night.jpeg"
+    },
+    {
+      title: {
+        cz: "Mona Lisa",
+        en: "Mona Lisa"
+      },
+      artist: {
+        cz: "Leonardo da Vinci · cca 1503–1519",
+        en: "Leonardo da Vinci · c. 1503–1519"
+      },
+      desc: {
+        cz: "Nejnavštěvovanější a nejvíce popisované umělecké dílo na světě.",
+        en: "The world's most visited and most written about work of art."
+      },
+      url: "./art/mona_lisa.jpg"
+    },
+    {
+      title: {
+        cz: "Poslední večeře",
+        en: "The Last Supper"
+      },
+      artist: {
+        cz: "Leonardo da Vinci · 1495–1498",
+        en: "Leonardo da Vinci · 1495–1498"
+      },
+      desc: {
+        cz: "Kristova poslední večeře s apoštoly namalovaná na stěně milánského refektáře.",
+        en: "Christ's final meal with the Apostles, painted on a Milan refectory wall."
+      },
+      url: "./art/last_supper.jpg"
+    },
+    {
+      title: {
+        cz: "Výkřik",
+        en: "The Scream"
+      },
+      artist: {
+        cz: "Edvard Munch · 1893",
+        en: "Edvard Munch · 1893"
+      },
+      desc: {
+        cz: "Úzkostí sevřená postava pod krvavě rudou oblohou — ikona existenciálního děsu.",
+        en: "An agonised figure against a blood-red sky — an icon of existential dread."
+      },
+      url: "./art/the_scream.jpg"
+    },
+    {
+      title: {
+        cz: "Zrození Venuše",
+        en: "The Birth of Venus"
+      },
+      artist: {
+        cz: "Sandro Botticelli · cca 1484–1486",
+        en: "Sandro Botticelli · c. 1484–1486"
+      },
+      desc: {
+        cz: "Bohyně lásky vystupuje z moře, zrozená z mořské pěny.",
+        en: "The goddess of love emerges from the sea, born fully grown from seafoam."
+      },
+      url: "./art/venus.webp"
+    },
+    {
+      title: {
+        cz: "Dívka s perlou",
+        en: "Girl with a Pearl Earring"
+      },
+      artist: {
+        cz: "Johannes Vermeer · cca 1665",
+        en: "Johannes Vermeer · c. 1665"
+      },
+      desc: {
+        cz: "Často nazývaná „Mona Lisa severu“ pro své tiché a zářivé tajemství.",
+        en: "Often called the 'Mona Lisa of the North' for its quiet, luminous mystery."
+      },
+      url: "./art/girl_with_earring.jpg"
+    }
+  ];
+
+  // ── State ──
+  // indices into paintings[] for the three visible slots
+  const total = paintings.length;
+  let centerIdx = 0;
+  let leftIdx   = (centerIdx - 1 + total) % total;
+  let rightIdx  = (centerIdx + 1) % total;
+
+  let animating = false;
+
+  // ── Build initial frames ──
+  const stage = document.getElementById('stage');
+
+  function applyNaturalRatio(frame, image) {
+    if (!image.naturalWidth || !image.naturalHeight) return;
+    const ratio = image.naturalWidth / image.naturalHeight;
+    frame.style.setProperty('--ratio', ratio);
+    frame.classList.toggle('landscape', ratio >= 1);
+    frame.classList.toggle('portrait', ratio < 1);
+  }
+
+  function makeFrame(idx, slotClass) {
+    const fr = document.createElement('div');
+    fr.className = `frame ${slotClass}`;
+    fr.dataset.idx = idx;
+    fr.style.setProperty('--ratio', 1);
+    const img = document.createElement('img');
+    img.src = paintings[idx].url;
+    img.alt = paintings[idx].title[currentLang];
+
+    img.addEventListener('load', () => applyNaturalRatio(fr, img));
+    if (img.complete) {
+      applyNaturalRatio(fr, img);
+    }
+    fr.appendChild(img);
+    return fr;
+  }
+
+  let frameLeft   = makeFrame(leftIdx,   'slot-left');
+  let frameCenter = makeFrame(centerIdx, 'slot-center');
+  let frameRight  = makeFrame(rightIdx,  'slot-right');
+
+  stage.appendChild(frameLeft);
+  stage.appendChild(frameCenter);
+  stage.appendChild(frameRight);
+
+  // ── Info panel ──
+  const infoPanel  = document.getElementById('info-panel');
+  const infoTitle  = document.getElementById('info-title');
+  const infoArtist = document.getElementById('info-artist');
+  const infoDesc   = document.getElementById('info-desc');
+  const langToggle = document.getElementById('langToggle');
+
+  function updateInfo(idx) {
+    infoPanel.classList.add('fading');
+    setTimeout(() => {
+      const p = paintings[idx];
+      infoTitle.textContent  = p.title[currentLang];
+      infoArtist.textContent = p.artist[currentLang];
+      infoDesc.textContent   = p.desc[currentLang];
+      document.documentElement.lang = currentLang;
+      [frameLeft, frameCenter, frameRight].forEach((frame) => {
+        if (!frame) return;
+        const idxStr = frame.dataset.idx;
+        if (idxStr === undefined) return;
+        const painting = paintings[Number(idxStr)];
+        const image = frame.querySelector('img');
+        if (painting && image) {
+          image.alt = painting.title[currentLang];
+        }
+      });
+      infoPanel.classList.remove('fading');
+    }, 400);
+  }
+
+  updateInfo(centerIdx);
+
+  // ── Navigate ──
+  function navigate(dir) {
+    if (animating) return;
+    animating = true;
+
+    // next indices
+    const nextCenter = (centerIdx + dir + total) % total;
+    const nextLeft   = (nextCenter - 1 + total) % total;
+    const nextRight  = (nextCenter + 1) % total;
+
+    if (dir === 1) {
+      // → right: center exits left, right becomes center, new frame enters from right
+
+      // 1. Tag current frames for transition
+      frameLeft.classList.replace('slot-left', 'exit-left');
+      frameCenter.classList.replace('slot-center', 'slot-left');
+      frameRight.classList.replace('slot-right', 'slot-center');
+
+      // 2. Create new right frame, start off-screen
+      const newRight = makeFrame(nextRight, 'enter-from-right');
+      stage.appendChild(newRight);
+      // force reflow so transition fires
+      newRight.getBoundingClientRect();
+      newRight.classList.replace('enter-from-right', 'slot-right');
+
+      // 3. After transition, remove exited frame and swap refs
+      setTimeout(() => {
+        frameLeft.remove();
+        frameLeft   = frameCenter;
+        frameCenter = frameRight;
+        frameRight  = newRight;
+        centerIdx   = nextCenter;
+        leftIdx     = nextLeft;
+        rightIdx    = nextRight;
+        updateInfo(centerIdx);
+        animating = false;
+      }, 220);
+
+    } else {
+      // ← left: center exits right, left becomes center, new frame enters from left
+
+      frameRight.classList.replace('slot-right', 'exit-right');
+      frameCenter.classList.replace('slot-center', 'slot-right');
+      frameLeft.classList.replace('slot-left', 'slot-center');
+
+      const newLeft = makeFrame(nextLeft, 'enter-from-left');
+      stage.prepend(newLeft);
+      newLeft.getBoundingClientRect();
+      newLeft.classList.replace('enter-from-left', 'slot-left');
+
+      setTimeout(() => {
+        frameRight.remove();
+        frameRight  = frameCenter;
+        frameCenter = frameLeft;
+        frameLeft   = newLeft;
+        centerIdx   = nextCenter;
+        leftIdx     = nextLeft;
+        rightIdx    = nextRight;
+        updateInfo(centerIdx);
+        animating = false;
+      }, 220);
+    }
+  }
+
+  document.getElementById('btn-left').addEventListener('click',  () => navigate(-1));
+  document.getElementById('btn-right').addEventListener('click', () => navigate(1));
+
+  langToggle.addEventListener('click', () => {
+    currentLang = currentLang === 'cz' ? 'en' : 'cz';
+    localStorage.setItem(LANG_KEY, currentLang);
+    updateInfo(centerIdx);
+  });
+
+  // Keyboard support
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') navigate(1);
+    if (e.key === 'ArrowLeft')  navigate(-1);
+  });
+</script>
 </body>
 </html>
