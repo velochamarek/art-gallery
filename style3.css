@@ -1,5 +1,76 @@
-body{
-    background-image: url("./pozadi/obrazekRam.png");
-    background-size: cover;
-    background-repeat: no-repeat;
-}
+        body {
+            /* Tmavé muzejní pozadí */
+            background-color: #1a1a1a;
+            margin: 0;
+            font-family: "Lavishly Yours", cursive, sans-serif;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* MENU */
+        .menu {
+            position: fixed;
+            right: -300px; /* Skryté menu mimo obrazovku */
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: #222;
+            padding: 20px;
+            box-shadow: -4px 0 10px rgba(0,0,0,0.5);
+            transition: right 0.3s ease;
+            z-index: 1000;
+        }
+        .menu.open { right: 0; }
+
+        .menu-item {
+            width: 100%; padding: 12px; margin: 10px 0;
+            background: #333; border: 1px solid #444; color: white;
+            cursor: pointer; border-radius: 6px; transition: background 0.2s;
+            font-family: Arial, sans-serif;
+        }
+        .menu-item:hover { background: #bd8c38; color: black; font-weight: bold; }
+        .menu-item#saveImage { background: #15626a; }
+
+        .open-btn {
+            position: fixed; top: 20px; left: 20px;
+            padding: 12px 16px; background: #bd8c38; border: none;
+            color: black; font-weight: bold; border-radius: 6px;
+            cursor: pointer; z-index: 1100; font-family: Arial, sans-serif;
+        }
+
+        .close-btn {
+            background: none; border: none; color: white;
+            font-size: 28px; cursor: pointer; float: right; margin-bottom: 20px;
+        }
+
+        /* PANELY */
+        .panel {
+            position: fixed; right: 320px; top: 20px; width: 300px; padding: 20px;
+            background: #222; border-radius: 10px; border: 1px solid #bd8c38;
+            box-shadow: 0 0 20px rgba(0,0,0,0.6); z-index: 900;
+            font-family: Arial, sans-serif;
+        }
+        .hidden { display: none; }
+
+        .style-btn, #clearCanvas {
+            display: block; width: 100%; padding: 8px; margin: 5px 0;
+            background: #444; border: none; color: white; cursor: pointer; border-radius: 4px;
+        }
+        .style-btn:hover, #clearCanvas:hover { background: #666; }
+
+        /* CANVAS */
+        .canvas-container {
+            border: 8px solid #bd8c38;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            background: #000;
+        }
+        #canvas {
+            display: block;
+            cursor: crosshair;
+            transition: filter 0.3s ease; /* Plynulý přechod pro filtry */
+        }

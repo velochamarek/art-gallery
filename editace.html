@@ -1,12 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Zlatý Štětec - Editor</title>
     <link rel="stylesheet" href="style3.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+    <link href="https://fonts.googleapis.com/css2?family=Lavishly+Yours&display=swap" rel="stylesheet">
 </head>
 <body>
-    
+
+    <button id="openMenu" class="open-btn">Otevřít Menu</button>
+
+    <div id="sideMenu" class="menu">
+        <button id="closeMenu" class="close-btn">&times;</button>
+        <button class="menu-item" data-panel="info">Info o obrazu</button>
+        <button class="menu-item" data-panel="draw">Kreslit po obrazu</button>
+        <button class="menu-item" data-panel="styles">Změnit styl</button>
+        <hr style="border-color: #444;">
+        <button class="menu-item" id="saveImage">Uložit výsledek</button>
+    </div>
+
+    <div id="panel-info" class="panel hidden">
+        <h3 style="color: #bd8c38;">Mona Lisa</h3>
+        <p>Nejslavnější portrét všech dob od Leonarda da Vinciho. Nyní si ho můžete upravit podle sebe!</p>
+    </div>
+
+    <div id="panel-draw" class="panel hidden">
+        <h3 style="color: #bd8c38;">Nástroje</h3>
+        <label>Vyber barvu: 
+            <input type="color" id="colorPicker" value="#ff0000">
+        </label>
+        <br><br>
+        <button id="clearCanvas">Smazat moje úpravy</button>
+    </div>
+
+    <div id="panel-styles" class="panel hidden">
+        <h3 style="color: #bd8c38;">Vyber styl</h3>
+        <button class="style-btn" data-style="none">Původní</button>
+        <button class="style-btn" data-style="grayscale">Černobílý</button>
+        <button class="style-btn" data-style="sepia">Historická Sepia</button>
+        <button class="style-btn" data-style="invert">Invertované barvy</button>
+        <button class="style-btn" data-style="contrast">Vysoký kontrast</button>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="canvas" width="450" height="650"></canvas>
+    </div>
+
+    <script src="script_editace.js"></script>
 </body>
 </html>
