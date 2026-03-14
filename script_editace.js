@@ -46,8 +46,28 @@ document.querySelectorAll(".style-btn").forEach(btn => {
     };
 });
 
-// --- DYNAMICKÉ NAČÍTÁNÍ A KRESLENÍ ---
+// --- DYNAMICKÉ NAČÍTÁNÍ INFO PANELU ---
+const currentImgUrl = localStorage.getItem("currentPainting") || "./art/mona_lisa.jpg";
+const savedTitle = localStorage.getItem("selectedPaintingTitle");
+const savedDesc = localStorage.getItem("selectedPaintingDesc");
+
+if (savedTitle || savedDesc) {
+    const titleElement = document.querySelector("#panel-info h3");
+    const descElement = document.querySelector("#panel-info p");
+    
+    if (titleElement) titleElement.textContent = savedTitle || "Neznámý obraz";
+    if (descElement) descElement.textContent = savedDesc || "Popis není k dispozici.";
+}
+
+// ==========================================
+// --- KRESLENÍ S NEVIDITELNOU VRSTVOU ---
+// ==========================================
 const ctx = canvas.getContext("2d");
+
+// Vytvoříme si v paměti "fólii" (neviditelné plátno) pro naše kreslení
+const drawingCanvas = document.createElement("canvas");
+const dctx = drawingCanvas.getContext("2d");
+
 let painting = false;
 let currentTool = "pencil";
 let history = [];
@@ -58,24 +78,13 @@ const brushSizeInput = document.getElementById("brushSize");
 
 const img = new Image();
 img.crossOrigin = "anonymous"; 
-const currentImgUrl = localStorage.getItem("currentPainting") || "./art/mona_lisa.jpg";
-const savedTitle = localStorage.getItem("selectedPaintingTitle");
-const savedDesc = localStorage.getItem("selectedPaintingDesc");
-
 img.src = currentImgUrl;
-
-if (savedTitle || savedDesc) {
-    const titleElement = document.querySelector("#panel-info h3");
-    const descElement = document.querySelector("#panel-info p");
-    
-    if (titleElement) titleElement.textContent = savedTitle || "Neznámý obraz";
-    if (descElement) descElement.textContent = savedDesc || "Popis není k dispozici.";
-}
 
 img.onload = () => {
     const ratio = img.naturalWidth / img.naturalHeight;
     const maxWidth = window.innerWidth * 0.6;
     const maxHeight = window.innerHeight * 0.8; 
+    
     if (maxWidth / maxHeight > ratio) {
         canvas.height = maxHeight;
         canvas.width = canvas.height * ratio;
@@ -83,41 +92,61 @@ img.onload = () => {
         canvas.width = maxWidth;
         canvas.height = canvas.width / ratio;
     }
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    loadSpecificEdits(); 
+
+    // Fólie musí mít stejné rozměry jako plátno
+    drawingCanvas.width = canvas.width;
+    drawingCanvas.height = canvas.height;
+
+    loadSpecificEdits(); // Načteme historii tahů
+    updateScreen();      // Poskládáme obraz a kresbu dohromady
 };
 
-// --- FUNKCE KRESLENÍ ---
+// Funkce, která všechno spojí a vykreslí na obrazovku
+function updateScreen() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height); // Podklad
+    ctx.drawImage(drawingCanvas, 0, 0); // Kresba (s průhlednostmi z gumy)
+}
+
+// --- FUNKCE KRESLENÍ NA FÓLII ---
 function startPosition(e) {
     saveToHistory();
     painting = true;
     draw(e);
 }
+
 function endPosition() {
     painting = false;
-    ctx.beginPath();
+    dctx.beginPath(); // Důležité: Začínáme novou cestu na fólii
     saveCurrentState();
 }
+
 function draw(e) {
     if (!painting) return;
-    ctx.lineWidth = brushSizeInput.value;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
+
+    // VŠE KRESLÍME JEN NA FÓLII (dctx), NE NA HLAVNÍ PLÁTNO
+    dctx.lineWidth = brushSizeInput.value;
+    dctx.lineCap = "round";
+    dctx.lineJoin = "round";
 
     if (currentTool === "eraser") {
-        ctx.globalCompositeOperation = "destination-out";
+        dctx.globalCompositeOperation = "destination-out"; // Nyní funguje správně!
     } else {
-        ctx.globalCompositeOperation = "source-over";
-        ctx.strokeStyle = colorPicker.value;
+        dctx.globalCompositeOperation = "source-over";
+        dctx.strokeStyle = colorPicker.value;
     }
 
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    ctx.lineTo(x, y);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(x, y);
+    
+    dctx.lineTo(x, y);
+    dctx.stroke();
+    dctx.beginPath();
+    dctx.moveTo(x, y);
+
+    // Po každém tahu spojíme fólii s fotkou, abys to viděl
+    updateScreen(); 
 }
 
 canvas.addEventListener("mousedown", startPosition);
@@ -126,28 +155,33 @@ canvas.addEventListener("mousemove", draw);
 
 // --- HISTORIE ---
 function saveToHistory() {
-    history.push(canvas.toDataURL());
+    // Do historie ukládáme jen čistou fólii (bez Mony Lisy) - šetří to obří kusy paměti!
+    history.push(drawingCanvas.toDataURL());
     if (history.length > 30) history.shift();
     redoList = [];
 }
+
 function undo() {
     if (history.length > 0) {
-        redoList.push(canvas.toDataURL());
+        redoList.push(drawingCanvas.toDataURL());
         renderState(history.pop());
     }
 }
+
 function redo() {
     if (redoList.length > 0) {
-        history.push(canvas.toDataURL());
+        history.push(drawingCanvas.toDataURL());
         renderState(redoList.pop());
     }
 }
+
 function renderState(stateUrl) {
     const imgState = new Image();
     imgState.src = stateUrl;
     imgState.onload = () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(imgState, 0, 0);
+        dctx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+        dctx.drawImage(imgState, 0, 0);
+        updateScreen();
         saveCurrentState();
     };
 }
@@ -159,26 +193,31 @@ document.getElementById("undoBtn").onclick = undo;
 document.getElementById("redoBtn").onclick = redo;
 
 function saveCurrentState() {
-    localStorage.setItem("edits_" + currentImgUrl, canvas.toDataURL("image/png"));
+    localStorage.setItem("edits_" + currentImgUrl, drawingCanvas.toDataURL("image/png"));
 }
+
 function loadSpecificEdits() {
     const saved = localStorage.getItem("edits_" + currentImgUrl);
     if (saved) {
         const tempImg = new Image();
         tempImg.src = saved;
-        tempImg.onload = () => ctx.drawImage(tempImg, 0, 0, canvas.width, canvas.height);
+        tempImg.onload = () => {
+            dctx.drawImage(tempImg, 0, 0); // Vykreslíme to na fólii
+            updateScreen();
+        };
     }
 }
 
 document.getElementById("clearCanvas").onclick = () => {
-    if(!confirm("Smazat vše?")) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height); 
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height); 
+    if(!confirm("Opravdu smazat všechny úpravy?")) return;
+    dctx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height); 
+    updateScreen(); 
     localStorage.removeItem("edits_" + currentImgUrl);
     history = []; redoList = [];
 };
 
 document.getElementById("saveImage").onclick = () => {
+    // Tady musíme vzít HLAVNÍ plátno, protože obsahuje jak obraz, tak malůvky
     const data = canvas.toDataURL("image/png");
     const request = indexedDB.open("MuseumGalleryDB", 2);
     request.onupgradeneeded = (e) => {
@@ -195,7 +234,7 @@ document.getElementById("saveImage").onclick = () => {
         transaction.oncomplete = () => {
             const link = document.createElement("a");
             link.download = "moje-umeni.png"; link.href = data; link.click();
-            alert("Uloženo! ✨");
+            alert("Nádherné dílo! Uloženo do Tvé galerie. ✨");
         };
     };
 };
