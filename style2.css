@@ -350,3 +350,212 @@
 body, button, #obal_nav, .arrow, #langToggle, .kreslit, .moje-galerie {
   cursor: none !important;
 }
+
+@media (max-width: 900px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  .room-title {
+    top: 72px;
+    font-size: 22px;
+    text-align: center;
+    width: calc(100vw - 32px);
+  }
+
+  #obal_nav {
+    top: 12px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: min(calc(100vw - 24px), 340px);
+    height: auto;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 6px;
+  }
+
+  .kreslit,
+  .moje-galerie {
+    width: 100%;
+    min-width: 0;
+    font-size: 11px;
+    height: 34px;
+    padding: 0 10px;
+  }
+
+  .lang-toggle {
+    width: 86px;
+    height: 34px;
+    justify-self: end;
+  }
+
+  .lang-thumb {
+    width: 39px;
+    height: 26px;
+  }
+
+  .lang-toggle.is-en .lang-thumb {
+    transform: translateX(41px);
+  }
+
+  .lang-option {
+    width: 43px;
+    font-size: 11px;
+  }
+
+  #wall {
+    min-height: 100svh;
+    padding: 132px 12px 140px;
+    align-items: flex-start;
+  }
+
+  #stage {
+    width: 100%;
+    height: auto;
+    min-height: 52vh;
+    gap: 14px;
+  }
+
+  .frame.slot-center {
+    width: min(58vw, 320px);
+  }
+
+  .frame.slot-left,
+  .frame.slot-right,
+  .frame.exit-left,
+  .frame.exit-right,
+  .frame.enter-from-left,
+  .frame.enter-from-right {
+    width: min(22vw, 120px);
+    max-width: 120px;
+  }
+
+  .frame.landscape.slot-center {
+    width: min(76vw, 460px);
+  }
+
+  .frame.landscape.slot-left,
+  .frame.landscape.slot-right,
+  .frame.landscape.exit-left,
+  .frame.landscape.exit-right,
+  .frame.landscape.enter-from-left,
+  .frame.landscape.enter-from-right {
+    width: min(28vw, 160px);
+    max-width: 160px;
+  }
+
+  .arrow {
+    top: auto;
+    bottom: 84px;
+    width: 42px;
+    height: 42px;
+  }
+
+  #btn-left {
+    left: 16px;
+  }
+
+  #btn-right {
+    right: 16px;
+  }
+
+  #info-panel {
+    bottom: 18px;
+    width: calc(100vw - 92px);
+    max-width: 420px;
+  }
+
+  #info-title {
+    font-size: 1.28rem;
+  }
+
+  #info-artist {
+    font-size: 0.72rem;
+  }
+
+  #info-desc {
+    font-size: 0.72rem;
+    line-height: 1.45;
+  }
+}
+
+@media (max-width: 520px) {
+  .room-title {
+    top: 110px;
+    font-size: 18px;
+    letter-spacing: 0.02em;
+  }
+
+  #obal_nav {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .lang-toggle {
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+
+  #wall {
+    padding-top: 154px;
+    padding-bottom: 154px;
+  }
+
+  #stage {
+    gap: 8px;
+  }
+
+  .frame.slot-center {
+    width: min(62vw, 270px);
+  }
+
+  .frame.landscape.slot-center {
+    width: min(84vw, 360px);
+  }
+
+  .frame.slot-left,
+  .frame.slot-right,
+  .frame.exit-left,
+  .frame.exit-right,
+  .frame.enter-from-left,
+  .frame.enter-from-right {
+    width: min(18vw, 80px);
+    max-width: 80px;
+  }
+
+  .frame.landscape.slot-left,
+  .frame.landscape.slot-right,
+  .frame.landscape.exit-left,
+  .frame.landscape.exit-right,
+  .frame.landscape.enter-from-left,
+  .frame.landscape.enter-from-right {
+    width: min(22vw, 110px);
+    max-width: 110px;
+  }
+
+  .arrow {
+    bottom: 96px;
+  }
+
+  #info-panel {
+    width: calc(100vw - 64px);
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  #kurzor {
+    display: none;
+  }
+
+  body,
+  button,
+  #obal_nav,
+  .arrow,
+  #langToggle,
+  .kreslit,
+  .moje-galerie,
+  .frame {
+    cursor: auto !important;
+  }
+}

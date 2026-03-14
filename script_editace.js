@@ -7,6 +7,7 @@ document.addEventListener("mousemove", (e) => {
 
 const menu = document.getElementById("sideMenu");
 const panels = document.querySelectorAll(".panel");
+const canvas = document.getElementById("canvas");
 
 function showPanel(id) {
     panels.forEach(p => p.classList.add("hidden")); 
@@ -17,21 +18,13 @@ document.querySelectorAll(".menu-item[data-panel]").forEach(btn => {
     btn.onclick = () => showPanel(btn.dataset.panel);
 });
 
-document.getElementById("closeMenu").onclick = () => {
-    menu.classList.remove("open");
-    panels.forEach(p => p.classList.add("hidden"));
-};
-
-// --- AUTO-SCHOVÁVÁNÍ MENU ---
-let menuTimeout;
-const canvas = document.getElementById("canvas");
-canvas.addEventListener("mouseenter", () => {
-    clearTimeout(menuTimeout);
-    menu.classList.remove("open");
-    panels.forEach(p => p.classList.add("hidden"));
-});
-canvas.addEventListener("mouseleave", () => {
-    menuTimeout = setTimeout(() => { menu.classList.add("open"); }, 300);
+// --- ZAVŘENÍ PANELU KLIKNUTÍM MIMO ---
+document.addEventListener("click", (e) => {
+    const insidePanel = [...panels].some(p => p.contains(e.target));
+    const insideMenu = menu.contains(e.target);
+    if (!insidePanel && !insideMenu) {
+        panels.forEach(p => p.classList.add("hidden"));
+    }
 });
 
 // --- STYLY OBRAZU ---

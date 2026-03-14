@@ -6,19 +6,18 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    overflow-x: hidden;
     cursor: none;
 }
 #kurzor { position: fixed; pointer-events: none; z-index: 999999; width: 100px; }
 
 /* MENU */
 .menu {
-    position: fixed; right: -300px; top: 0; width: 260px; height: 100vh;
+    position: fixed; right: 0; top: 0; width: 260px; height: 100vh;
     background: #222; padding: 20px; box-shadow: -4px 0 10px rgba(0,0,0,0.5);
-    transition: right 0.3s ease; z-index: 1000;
+    z-index: 1000;
 }
-.menu.open { right: 0; }
 .menu-item {
     width: 100%; padding: 12px; margin: 10px 0; background: #333; 
     border: 1px solid #444; color: white; border-radius: 6px; cursor: none !important;
@@ -124,4 +123,96 @@ body {
 #colorPicker::-webkit-color-swatch {
     border: none;
     border-radius: 50%;
+}
+
+@media (max-width: 900px) {
+    body {
+        align-items: flex-start;
+        padding: 72px 12px 24px;
+    }
+
+    #obal_nav {
+        top: 12px;
+        left: 12px;
+    }
+
+    .menu {
+        width: min(84vw, 320px);
+        right: 0;
+        padding: 16px;
+    }
+
+    .panel {
+        right: 12px;
+        top: 72px;
+        width: min(calc(100vw - 24px), 320px);
+        max-height: calc(100svh - 96px);
+        overflow: auto;
+    }
+
+    .canvas-container {
+        width: min(92vw, 450px);
+        border-width: 6px;
+    }
+
+    #canvas {
+        width: 100%;
+        height: auto;
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        padding-top: 64px;
+    }
+
+    #obal_nav {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .kreslit {
+        padding: 8px 14px;
+    }
+
+    .menu {
+        width: 100vw;
+        right: 0;
+        height: auto;
+        min-height: 100svh;
+        border-left: 1px solid #333;
+    }
+
+    .panel {
+        left: 12px;
+        right: 12px;
+        width: auto;
+        top: auto;
+        bottom: 12px;
+        max-height: 52svh;
+    }
+
+    .tool-group,
+    .history-group {
+        flex-direction: column;
+    }
+}
+
+@media (hover: none), (pointer: coarse) {
+    #kurzor {
+        display: none;
+    }
+
+    body,
+    .menu-item,
+    .kreslit,
+    .panel button,
+    .style-btn,
+    #clearCanvas,
+    #brushSize,
+    #colorPicker,
+    .tool-group button,
+    .history-group button {
+        cursor: auto !important;
+    }
 }
