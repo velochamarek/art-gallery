@@ -165,6 +165,21 @@ function draw(e) {
 canvas.addEventListener("mousedown", startPosition);
 canvas.addEventListener("mouseup", endPosition);
 canvas.addEventListener("mousemove", draw);
+// --- PODPORA PRO MOBIL (TOUCH) ---
+canvas.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    startPosition(e.touches[0]);
+});
+
+canvas.addEventListener("touchend", (e) => {
+    e.preventDefault();
+    endPosition();
+});
+
+canvas.addEventListener("touchmove", (e) => {
+    e.preventDefault();
+    draw(e.touches[0]);
+});
 
 // --- HISTORIE ---
 function saveToHistory() {
