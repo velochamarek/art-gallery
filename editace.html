@@ -15,9 +15,11 @@
     </audio>
 
     <img src="./images/kurzorStetec.png" id="kurzor">
+    
     <div id="obal_nav">
         <button onclick="window.location.href='index_mistnost.html'" class="kreslit">Zpět na výběr</button>
     </div>
+
     <div id="sideMenu" class="menu">
         <button id="closeMenu" class="close-btn">&times;</button>
         <button class="menu-item" data-panel="info">Info o obrazu</button>
@@ -28,16 +30,26 @@
     </div>
 
     <div id="panel-info" class="panel hidden">
-        <h3 style="color: #bd8c38;">Mona Lisa</h3>
-        <p>Nejslavnější portrét všech dob od Leonarda da Vinciho. Nyní si ho můžete upravit podle sebe!</p>
+        <h3 style="color: #bd8c38;">Info o obrazu</h3>
+        <p>Načítání informací...</p>
     </div>
 
     <div id="panel-draw" class="panel hidden">
         <h3 style="color: #bd8c38;">Nástroje</h3>
-        <label>Vyber barvu: 
-            <input type="color" id="colorPicker" value="#ff0000">
-        </label>
+        <label>Barva: <input type="color" id="colorPicker" value="#ff0000"></label>
         <br><br>
+        <label>Tloušťka: <input type="range" id="brushSize" min="1" max="50" value="5"></label>
+        <br><br>
+        <div class="tool-group">
+            <button id="toolPencil">🖌️ Štětec</button>
+            <button id="toolEraser">🧽 Guma</button>
+        </div>
+        <br>
+        <div class="history-group">
+            <button id="undoBtn">↩️ Zpět</button>
+            <button id="redoBtn">↪️ Vpřed</button>
+        </div>
+        <br>
         <button id="clearCanvas">Smazat moje úpravy</button>
     </div>
 

@@ -6,8 +6,8 @@ document.addEventListener("mousemove", (e) => {
 });
 
 const menu = document.getElementById("sideMenu");
-
 const panels = document.querySelectorAll(".panel");
+
 function showPanel(id) {
     panels.forEach(p => p.classList.add("hidden")); 
     if(id) document.getElementById("panel-" + id).classList.remove("hidden"); 
@@ -17,8 +17,24 @@ document.querySelectorAll(".menu-item[data-panel]").forEach(btn => {
     btn.onclick = () => showPanel(btn.dataset.panel);
 });
 
-// --- STYLY OBRAZU ---
+document.getElementById("closeMenu").onclick = () => {
+    menu.classList.remove("open");
+    panels.forEach(p => p.classList.add("hidden"));
+};
+
+// --- AUTO-SCHOVÁVÁNÍ MENU ---
+let menuTimeout;
 const canvas = document.getElementById("canvas");
+canvas.addEventListener("mouseenter", () => {
+    clearTimeout(menuTimeout);
+    menu.classList.remove("open");
+    panels.forEach(p => p.classList.add("hidden"));
+});
+canvas.addEventListener("mouseleave", () => {
+    menuTimeout = setTimeout(() => { menu.classList.add("open"); }, 300);
+});
+
+// --- STYLY OBRAZU ---
 document.querySelectorAll(".style-btn").forEach(btn => {
     btn.onclick = () => {
         const style = btn.dataset.style;
@@ -29,27 +45,19 @@ document.querySelectorAll(".style-btn").forEach(btn => {
                              "contrast(200%) saturate(150%)";
     };
 });
-let menuTimeout;
 
-canvas.addEventListener("mouseenter", () => {
-    clearTimeout(menuTimeout);
-    menu.classList.remove("open");
-    panels.forEach(p => p.classList.add("hidden"));
-});
-
-canvas.addEventListener("mouseleave", () => {
-    menuTimeout = setTimeout(() => {
-        menu.classList.add("open");
-    }, 300);
-});
-// --- DYNAMICKÉ NAČÍTÁNÍ ---
+// --- DYNAMICKÉ NAČÍTÁNÍ A KRESLENÍ ---
 const ctx = canvas.getContext("2d");
 let painting = false;
-let colorPicker = document.getElementById("colorPicker");
+let currentTool = "pencil";
+let history = [];
+let redoList = [];
+
+const colorPicker = document.getElementById("colorPicker");
+const brushSizeInput = document.getElementById("brushSize");
 
 const img = new Image();
 img.crossOrigin = "anonymous"; 
-
 const currentImgUrl = localStorage.getItem("currentPainting") || "./art/mona_lisa.jpg";
 const savedTitle = localStorage.getItem("selectedPaintingTitle");
 const savedDesc = localStorage.getItem("selectedPaintingDesc");
@@ -65,7 +73,6 @@ img.onload = () => {
     const ratio = img.naturalWidth / img.naturalHeight;
     const maxWidth = window.innerWidth * 0.6;
     const maxHeight = window.innerHeight * 0.8; 
-
     if (maxWidth / maxHeight > ratio) {
         canvas.height = maxHeight;
         canvas.width = canvas.height * ratio;
@@ -73,20 +80,34 @@ img.onload = () => {
         canvas.width = maxWidth;
         canvas.height = canvas.width / ratio;
     }
-
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     loadSpecificEdits(); 
 };
 
-// --- KRESLENÍ ---
-function startPosition(e) { painting = true; draw(e); }
-function endPosition() { painting = false; ctx.beginPath(); saveCurrentState(); }
-
+// --- FUNKCE KRESLENÍ ---
+function startPosition(e) {
+    saveToHistory();
+    painting = true;
+    draw(e);
+}
+function endPosition() {
+    painting = false;
+    ctx.beginPath();
+    saveCurrentState();
+}
 function draw(e) {
     if (!painting) return;
-    ctx.lineWidth = 5;
+    ctx.lineWidth = brushSizeInput.value;
     ctx.lineCap = "round";
-    ctx.strokeStyle = colorPicker.value;
+    ctx.lineJoin = "round";
+
+    if (currentTool === "eraser") {
+        ctx.globalCompositeOperation = "destination-out";
+    } else {
+        ctx.globalCompositeOperation = "source-over";
+        ctx.strokeStyle = colorPicker.value;
+    }
+
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -100,12 +121,43 @@ canvas.addEventListener("mousedown", startPosition);
 canvas.addEventListener("mouseup", endPosition);
 canvas.addEventListener("mousemove", draw);
 
-// --- PAMĚŤ A UKLÁDÁNÍ ---
-function saveCurrentState() {
-    const data = canvas.toDataURL("image/png");
-    localStorage.setItem("edits_" + currentImgUrl, data);
+// --- HISTORIE ---
+function saveToHistory() {
+    history.push(canvas.toDataURL());
+    if (history.length > 30) history.shift();
+    redoList = [];
+}
+function undo() {
+    if (history.length > 0) {
+        redoList.push(canvas.toDataURL());
+        renderState(history.pop());
+    }
+}
+function redo() {
+    if (redoList.length > 0) {
+        history.push(canvas.toDataURL());
+        renderState(redoList.pop());
+    }
+}
+function renderState(stateUrl) {
+    const imgState = new Image();
+    imgState.src = stateUrl;
+    imgState.onload = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(imgState, 0, 0);
+        saveCurrentState();
+    };
 }
 
+// --- OVLÁDÁNÍ ---
+document.getElementById("toolPencil").onclick = () => currentTool = "pencil";
+document.getElementById("toolEraser").onclick = () => currentTool = "eraser";
+document.getElementById("undoBtn").onclick = undo;
+document.getElementById("redoBtn").onclick = redo;
+
+function saveCurrentState() {
+    localStorage.setItem("edits_" + currentImgUrl, canvas.toDataURL("image/png"));
+}
 function loadSpecificEdits() {
     const saved = localStorage.getItem("edits_" + currentImgUrl);
     if (saved) {
@@ -116,39 +168,31 @@ function loadSpecificEdits() {
 }
 
 document.getElementById("clearCanvas").onclick = () => {
+    if(!confirm("Smazat vše?")) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height); 
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height); 
     localStorage.removeItem("edits_" + currentImgUrl);
-    localStorage.removeItem("editedMonaLisa"); 
+    history = []; redoList = [];
 };
 
 document.getElementById("saveImage").onclick = () => {
     const data = canvas.toDataURL("image/png");
-    const title = savedTitle || "Moje dílo";
-    const date = new Date().toLocaleString("cs-CZ");
-
     const request = indexedDB.open("MuseumGalleryDB", 2);
-
     request.onupgradeneeded = (e) => {
         const db = e.target.result;
         if (!db.objectStoreNames.contains("savedArtworks")) {
             db.createObjectStore("savedArtworks", { keyPath: "id", autoIncrement: true });
         }
     };
-
     request.onsuccess = (e) => {
         const db = e.target.result;
         const transaction = db.transaction("savedArtworks", "readwrite");
         const store = transaction.objectStore("savedArtworks");
-        store.add({ imageData: data, title: title, date: date });
-        
+        store.add({ imageData: data, title: savedTitle || "Dílo", date: new Date().toLocaleString("cs-CZ") });
         transaction.oncomplete = () => {
             const link = document.createElement("a");
-            link.download = "moje-umeni.png";
-            link.href = data;
-            link.click();
-            alert("Uloženo do galerie i do PC! ✨");
+            link.download = "moje-umeni.png"; link.href = data; link.click();
+            alert("Uloženo! ✨");
         };
     };
-    request.onerror = () => alert("Chyba při otevírání databáze.");
 };
