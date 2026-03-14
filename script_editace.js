@@ -6,11 +6,6 @@ document.addEventListener("mousemove", (e) => {
 });
 
 const menu = document.getElementById("sideMenu");
-document.getElementById("openMenu").onclick = () => menu.classList.add("open");
-document.getElementById("closeMenu").onclick = () => {
-    menu.classList.remove("open");
-    document.querySelectorAll(".panel").forEach(p => p.classList.add("hidden"));
-};
 
 const panels = document.querySelectorAll(".panel");
 function showPanel(id) {
@@ -34,7 +29,19 @@ document.querySelectorAll(".style-btn").forEach(btn => {
                              "contrast(200%) saturate(150%)";
     };
 });
+let menuTimeout;
 
+canvas.addEventListener("mouseenter", () => {
+    clearTimeout(menuTimeout);
+    menu.classList.remove("open");
+    panels.forEach(p => p.classList.add("hidden"));
+});
+
+canvas.addEventListener("mouseleave", () => {
+    menuTimeout = setTimeout(() => {
+        menu.classList.add("open");
+    }, 300);
+});
 // --- DYNAMICKÉ NAČÍTÁNÍ ---
 const ctx = canvas.getContext("2d");
 let painting = false;
