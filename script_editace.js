@@ -8,6 +8,20 @@ document.addEventListener("mousemove", (e) => {
 const menu = document.getElementById("sideMenu");
 const panels = document.querySelectorAll(".panel");
 const canvas = document.getElementById("canvas");
+const mobileMenuToggle = document.getElementById("mobileMenuToggle");
+
+function isMobileView() {
+    return window.matchMedia("(max-width: 600px)").matches;
+}
+
+if (mobileMenuToggle) {
+    mobileMenuToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (isMobileView()) {
+            menu.classList.toggle("is-mobile-open");
+        }
+    });
+}
 
 function showPanel(id) {
     panels.forEach(p => p.classList.add("hidden")); 
@@ -22,8 +36,14 @@ document.querySelectorAll(".menu-item[data-panel]").forEach(btn => {
 document.addEventListener("click", (e) => {
     const insidePanel = [...panels].some(p => p.contains(e.target));
     const insideMenu = menu.contains(e.target);
+    const clickedToggle = mobileMenuToggle && mobileMenuToggle.contains(e.target);
+
     if (!insidePanel && !insideMenu) {
         panels.forEach(p => p.classList.add("hidden"));
+    }
+
+    if (isMobileView() && !insideMenu && !clickedToggle) {
+        menu.classList.remove("is-mobile-open");
     }
 });
 

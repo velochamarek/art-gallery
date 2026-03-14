@@ -18,6 +18,22 @@ body {
     background: #222; padding: 20px; box-shadow: -4px 0 10px rgba(0,0,0,0.5);
     z-index: 1000;
 }
+.mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    width: 42px;
+    height: 42px;
+    border: 1px solid #2E3250;
+    border-radius: 10px;
+    background: rgba(31,34,54,0.85);
+    color: #E8E2D0;
+    font-size: 24px;
+    line-height: 1;
+    z-index: 1101;
+    cursor: none !important;
+}
 .menu-item {
     width: 100%; padding: 12px; margin: 10px 0; background: #333; 
     border: 1px solid #444; color: white; border-radius: 6px; cursor: none !important;
@@ -166,6 +182,12 @@ body {
         padding-top: 64px;
     }
 
+    .mobile-menu-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     #obal_nav {
         left: 50%;
         transform: translateX(-50%);
@@ -177,10 +199,14 @@ body {
 
     .menu {
         width: 100vw;
-        right: 0;
+        right: -100vw;
         height: auto;
         min-height: 100svh;
         border-left: 1px solid #333;
+    }
+
+    .menu.is-mobile-open {
+        right: 0;
     }
 
     .panel {
@@ -212,7 +238,8 @@ body {
     #brushSize,
     #colorPicker,
     .tool-group button,
-    .history-group button {
+    .history-group button,
+    .mobile-menu-toggle {
         cursor: auto !important;
     }
 }
