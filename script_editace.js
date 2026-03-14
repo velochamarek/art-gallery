@@ -266,3 +266,13 @@ document.getElementById("saveImage").onclick = () => {
         };
     };
 };
+// --- AUTOMATICKÉ OTEVŘENÍ PANELU NA MOBILU ---
+function openPanelOnMobile() {
+    if (window.innerWidth < 900) {
+        const panelDraw = document.getElementById("panel-draw");
+        if (panelDraw) panelDraw.classList.remove("hidden");
+    }
+}
+
+window.addEventListener("load", openPanelOnMobile);
+window.addEventListener("resize", openPanelOnMobile);

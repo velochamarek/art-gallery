@@ -147,7 +147,28 @@ body {
         align-items: flex-start;
         padding: 72px 12px 24px;
     }
+    .panel {
+        position: fixed;
+        bottom: 0;            /* dole */
+        left: 0;
+        right: 0;
+        width: 100%;          /* celá šířka */
+        max-height: 40svh;    /* nezabírá celý obraz */
+        padding: 12px;
+        border-radius: 12px 12px 0 0; /* zaoblení nahoře */
+        background: #222;
+        border: 1px solid #bd8c38;
+        overflow-y: auto;     /* scroll, pokud víc obsahu */
+        font-size: 14px;
+        z-index: 999;
+    }
 
+    /* tlačítka menší */
+    .tool-group button,
+    .history-group button {
+        font-size: 12px;
+        padding: 6px;
+    }
     #obal_nav {
         top: 12px;
         left: 12px;
