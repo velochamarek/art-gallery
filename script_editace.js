@@ -1,195 +1,147 @@
 // --- LOGIKA MENU A PANELŮ ---
-//kurzor
 const kurzor = document.getElementById("kurzor");
- 
 document.addEventListener("mousemove", (e) => {
     kurzor.style.left = (e.pageX - 20) + "px";
     kurzor.style.top = (e.pageY - 10) + "px";
 });
- 
+
 const menu = document.getElementById("sideMenu");
-document.getElementById("openMenu").onclick = () => {
-    menu.classList.add("open");
-};
+document.getElementById("openMenu").onclick = () => menu.classList.add("open");
 document.getElementById("closeMenu").onclick = () => {
     menu.classList.remove("open");
     document.querySelectorAll(".panel").forEach(p => p.classList.add("hidden"));
 };
- 
+
 const panels = document.querySelectorAll(".panel");
 function showPanel(id) {
-    panels.forEach(p => p.classList.add("hidden"));
-    if(id) document.getElementById("panel-" + id).classList.remove("hidden");
+    panels.forEach(p => p.classList.add("hidden")); 
+    if(id) document.getElementById("panel-" + id).classList.remove("hidden"); 
 }
- 
+
 document.querySelectorAll(".menu-item[data-panel]").forEach(btn => {
     btn.onclick = () => showPanel(btn.dataset.panel);
 });
- 
-// --- STYLY OBRAZU (CSS FILTRY) ---
+
+// --- STYLY OBRAZU ---
 const canvas = document.getElementById("canvas");
 document.querySelectorAll(".style-btn").forEach(btn => {
     btn.onclick = () => {
         const style = btn.dataset.style;
-        if (style === "none") canvas.style.filter = "none";
-        if (style === "grayscale") canvas.style.filter = "grayscale(100%)";
-        if (style === "sepia") canvas.style.filter = "sepia(100%)";
-        if (style === "invert") canvas.style.filter = "invert(100%)";
-        if (style === "contrast") canvas.style.filter = "contrast(200%) saturate(150%)";
+        canvas.style.filter = (style === "none") ? "none" : 
+                             (style === "grayscale") ? "grayscale(100%)" :
+                             (style === "sepia") ? "sepia(100%)" :
+                             (style === "invert") ? "invert(100%)" :
+                             "contrast(200%) saturate(150%)";
     };
 });
- 
-// --- TVŮJ KÓD PRO KRESLENÍ ---
+
+// --- DYNAMICKÉ NAČÍTÁNÍ ---
 const ctx = canvas.getContext("2d");
 let painting = false;
 let colorPicker = document.getElementById("colorPicker");
- 
-// DYNAMICKÉ NAČTENÍ OBRÁZKU Z GALERIE
+
 const img = new Image();
-img.crossOrigin = "anonymous";
- 
-// Tady se podíváme, co nám galerie poslala
-const savedArt = localStorage.getItem("currentPainting");
+img.crossOrigin = "anonymous"; 
+
+const currentImgUrl = localStorage.getItem("currentPainting") || "./art/mona_lisa.jpg";
 const savedTitle = localStorage.getItem("selectedPaintingTitle");
 const savedDesc = localStorage.getItem("selectedPaintingDesc");
- 
-// Pokud máme cestu z galerie, použijeme ji, jinak default Mona Lisa
-img.src = savedArt ? savedArt : "./art/mona_lisa.jpg";
- 
-// Aktualizace textu v Info panelu, aby tam nebyla jen Mona Lisa
+
+img.src = currentImgUrl;
+
 if (savedTitle) {
-    const infoHeader = document.querySelector("#panel-info h3");
-    const infoText = document.querySelector("#panel-info p");
-    if (infoHeader) infoHeader.textContent = savedTitle;
-    if (infoText) infoText.textContent = savedDesc;
+    document.querySelector("#panel-info h3").textContent = savedTitle;
+    document.querySelector("#panel-info p").textContent = savedDesc;
 }
- 
+
 img.onload = () => {
-    // --- Dynamická velikost canvasu podle obrazu ---
-    const ratio = img.naturalWidth / img.naturalHeight; // šířka / výška
-    const maxWidth = window.innerWidth * 0.5;  // půlka stránky pro šířku
-    const maxHeight = window.innerHeight * 0.5; // půlka pro výšku
-    const extraHeightFactor = 1.7; // jak moc chceme vysoké obrazy zvětšit
- 
-    if (ratio >= 1) {
-        // Široký obraz → omezíme podle šířky
+    const ratio = img.naturalWidth / img.naturalHeight;
+    const maxWidth = window.innerWidth * 0.6;
+    const maxHeight = window.innerHeight * 0.8; 
+
+    if (maxWidth / maxHeight > ratio) {
+        canvas.height = maxHeight;
+        canvas.width = canvas.height * ratio;
+    } else {
         canvas.width = maxWidth;
         canvas.height = canvas.width / ratio;
-    } else {
-        // Vysoký obraz → zvětšíme podle výšky
-        canvas.height = maxHeight * extraHeightFactor;
-        canvas.width = canvas.height * ratio;
- 
-        // Ale aby se nevešel mimo obrazovku, omezení:
-        if (canvas.width > window.innerWidth * 0.8) {
-            canvas.width = window.innerWidth * 0.8;
-            canvas.height = canvas.width / ratio;
-        }
     }
- 
-    // --- Vyčistit canvas před novým obrazem ---
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
- 
-    // --- Nakreslit nový obraz ---
+
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
- 
-    // --- Načtení starého uloženého obrázku jen pokud je stejné dílo ---
-    const saved = localStorage.getItem("editedMonaLisa");
-    const savedArt = localStorage.getItem("currentPainting");
-    if (saved && savedArt === img.src) {
-        const image = new Image();
-        image.src = saved;
-        image.onload = () => {
-            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-        }
-    }
- 
-    // --- Uložíme aktuální obrázek jako "currentPainting" ---
-    localStorage.setItem("currentPainting", img.src);
+    loadSpecificEdits(); 
 };
- 
-function startPosition(e) {
-    painting = true;
-    draw(e);
-}
- 
-function endPosition() {
-    painting = false;
-    ctx.beginPath();
-}
- 
+
+// --- KRESLENÍ ---
+function startPosition(e) { painting = true; draw(e); }
+function endPosition() { painting = false; ctx.beginPath(); saveCurrentState(); }
+
 function draw(e) {
     if (!painting) return;
- 
     ctx.lineWidth = 5;
     ctx.lineCap = "round";
     ctx.strokeStyle = colorPicker.value;
- 
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
- 
     ctx.lineTo(x, y);
     ctx.stroke();
     ctx.beginPath();
     ctx.moveTo(x, y);
 }
- 
+
 canvas.addEventListener("mousedown", startPosition);
 canvas.addEventListener("mouseup", endPosition);
 canvas.addEventListener("mousemove", draw);
- 
-// --- ULOŽENÍ A VYMAZÁNÍ ---
-document.getElementById("clearCanvas").onclick = function clearCanvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    localStorage.removeItem("editedMonaLisa");
-};
- 
-// --- ULOŽENÍ DO INDEXEDDB A STAŽENÍ ---
-document.getElementById("saveImage").onclick = function saveImage() {
+
+// --- PAMĚŤ A UKLÁDÁNÍ ---
+function saveCurrentState() {
     const data = canvas.toDataURL("image/png");
-    const title = localStorage.getItem("selectedPaintingTitle") || "Moje mistrovské dílo";
+    localStorage.setItem("edits_" + currentImgUrl, data);
+}
+
+function loadSpecificEdits() {
+    const saved = localStorage.getItem("edits_" + currentImgUrl);
+    if (saved) {
+        const tempImg = new Image();
+        tempImg.src = saved;
+        tempImg.onload = () => ctx.drawImage(tempImg, 0, 0, canvas.width, canvas.height);
+    }
+}
+
+document.getElementById("clearCanvas").onclick = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); 
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height); 
+    localStorage.removeItem("edits_" + currentImgUrl);
+    localStorage.removeItem("editedMonaLisa"); 
+};
+
+document.getElementById("saveImage").onclick = () => {
+    const data = canvas.toDataURL("image/png");
+    const title = savedTitle || "Moje dílo";
     const date = new Date().toLocaleString("cs-CZ");
- 
-    // 1. Uložení do IndexedDB (lokální databáze)
-    const request = indexedDB.open("MuseumGalleryDB", 1);
-    // Tohle se spustí jen při prvním vytvoření databáze
-    request.onupgradeneeded = function(e) {
+
+    const request = indexedDB.open("MuseumGalleryDB", 2);
+
+    request.onupgradeneeded = (e) => {
         const db = e.target.result;
         if (!db.objectStoreNames.contains("savedArtworks")) {
             db.createObjectStore("savedArtworks", { keyPath: "id", autoIncrement: true });
         }
     };
- 
-    request.onsuccess = function(e) {
+
+    request.onsuccess = (e) => {
         const db = e.target.result;
         const transaction = db.transaction("savedArtworks", "readwrite");
         const store = transaction.objectStore("savedArtworks");
-        // Přidáme náš obraz do databáze
         store.add({ imageData: data, title: title, date: date });
-        transaction.oncomplete = function() {
-            // 2. Stažení do PC (až když je uloženo v DB)
+        
+        transaction.oncomplete = () => {
             const link = document.createElement("a");
             link.download = "moje-umeni.png";
             link.href = data;
             link.click();
-            alert("Uloženo do tvé soukromé galerie i staženo do PC!");
+            alert("Uloženo do galerie i do PC! ✨");
         };
     };
- 
-    request.onerror = function() {
-        alert("Něco se pokazilo při ukládání do galerie.");
-    };
+    request.onerror = () => alert("Chyba při otevírání databáze.");
 };
- 
-function loadImage() {
-    const saved = localStorage.getItem("editedMonaLisa");
-    if (saved) {
-        const image = new Image();
-        image.src = saved;
-        image.onload = () => {
-            ctx.drawImage(image, 0, 0);
-        }
-    }
-}
