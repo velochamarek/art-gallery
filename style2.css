@@ -137,7 +137,7 @@
       box-shadow: 0 20px 80px rgba(0,0,0,0.95);
       background: transparent;
       overflow: hidden;
-      cursor: pointer;
+      cursor: none;
       will-change: transform, opacity, filter, width;
       transition:
         transform 0.32s cubic-bezier(0.77,0,0.175,1),
@@ -340,4 +340,13 @@
   justify-content: space-between;
   padding: 0 10px;
   gap: 6px;
+}
+#kurzor {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  width: 80px; /* velikost kurzoru */
+}
+body, button, #obal_nav, .arrow, #langToggle, .kreslit, .moje-galerie {
+  cursor: none !important;
 }
