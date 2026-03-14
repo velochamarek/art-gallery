@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400&display=swap" rel="stylesheet" />
 </head>
 <body>
+  <div id="roomTitle" class="room-title">Interactive Museum</div>
     <div id="obal_nav">
       <button onclick="window.location.href='editace.html'" class="kreslit">Kreslit</button>
       <button type="button" class="moje-galerie">Moje galerie</button>
@@ -153,11 +154,23 @@ if (localStorage.getItem("audioAllowed") === "yes") {
   // ── State ──
   // indices into paintings[] for the three visible slots
   const total = paintings.length;
+  const NAV_ANIM_MS = 320;
   let centerIdx = 0;
   let leftIdx   = (centerIdx - 1 + total) % total;
   let rightIdx  = (centerIdx + 1) % total;
 
   let animating = false;
+
+  const preloadedPaintings = new Set();
+  function preloadPainting(idx) {
+    if (preloadedPaintings.has(idx)) return;
+    const preImg = new Image();
+    preImg.decoding = 'async';
+    preImg.src = paintings[idx].url;
+    preloadedPaintings.add(idx);
+  }
+
+  paintings.forEach((_, idx) => preloadPainting(idx));
 
   // ── Build initial frames ──
   const stage = document.getElementById('stage');
@@ -173,15 +186,28 @@ if (localStorage.getItem("audioAllowed") === "yes") {
   function makeFrame(idx, slotClass) {
     const fr = document.createElement('div');
     fr.className = `frame ${slotClass}`;
+    if (slotClass === 'slot-center' && idx === centerIdx) {
+      fr.classList.add('initial-center-hidden');
+    }
     fr.dataset.idx = idx;
     fr.style.setProperty('--ratio', 1);
     const img = document.createElement('img');
+    img.decoding = 'async';
+    img.loading = 'eager';
     img.src = paintings[idx].url;
     img.alt = paintings[idx].title[currentLang];
 
-    img.addEventListener('load', () => applyNaturalRatio(fr, img));
+    img.addEventListener('load', () => {
+      applyNaturalRatio(fr, img);
+      requestAnimationFrame(() => {
+        fr.classList.remove('initial-center-hidden');
+      });
+    });
     if (img.complete) {
       applyNaturalRatio(fr, img);
+      requestAnimationFrame(() => {
+        fr.classList.remove('initial-center-hidden');
+      });
     }
     fr.appendChild(img);
     return fr;
@@ -201,6 +227,7 @@ if (localStorage.getItem("audioAllowed") === "yes") {
   const infoArtist = document.getElementById('info-artist');
   const infoDesc   = document.getElementById('info-desc');
   const langToggle = document.getElementById('langToggle');
+  const roomTitle = document.getElementById('roomTitle');
   const drawBtn = document.querySelector('.kreslit');
   const myGalleryBtn = document.querySelector('.moje-galerie');
 
@@ -214,6 +241,9 @@ if (localStorage.getItem("audioAllowed") === "yes") {
     }
     if (myGalleryBtn) {
       myGalleryBtn.textContent = currentLang === 'en' ? 'My Gallery' : 'Moje galerie';
+    }
+    if (roomTitle) {
+      roomTitle.textContent = currentLang === 'en' ? 'Interactive Museum' : 'Interaktivní muzeum';
     }
   }
 
@@ -254,6 +284,9 @@ if (localStorage.getItem("audioAllowed") === "yes") {
     const nextLeft   = (nextCenter - 1 + total) % total;
     const nextRight  = (nextCenter + 1) % total;
 
+    preloadPainting(nextLeft);
+    preloadPainting(nextRight);
+
     if (dir === 1) {
       // → right: center exits left, right becomes center, new frame enters from right
 
@@ -265,9 +298,11 @@ if (localStorage.getItem("audioAllowed") === "yes") {
       // 2. Create new right frame, start off-screen
       const newRight = makeFrame(nextRight, 'enter-from-right');
       stage.appendChild(newRight);
-      // force reflow so transition fires
-      newRight.getBoundingClientRect();
-      newRight.classList.replace('enter-from-right', 'slot-right');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          newRight.classList.replace('enter-from-right', 'slot-right');
+        });
+      });
 
       // 3. After transition, remove exited frame and swap refs
       setTimeout(() => {
@@ -280,7 +315,7 @@ if (localStorage.getItem("audioAllowed") === "yes") {
         rightIdx    = nextRight;
         updateInfo(centerIdx);
         animating = false;
-      }, 220);
+      }, NAV_ANIM_MS);
 
     } else {
       // ← left: center exits right, left becomes center, new frame enters from left
@@ -291,8 +326,11 @@ if (localStorage.getItem("audioAllowed") === "yes") {
 
       const newLeft = makeFrame(nextLeft, 'enter-from-left');
       stage.prepend(newLeft);
-      newLeft.getBoundingClientRect();
-      newLeft.classList.replace('enter-from-left', 'slot-left');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          newLeft.classList.replace('enter-from-left', 'slot-left');
+        });
+      });
 
       setTimeout(() => {
         frameRight.remove();
@@ -304,7 +342,7 @@ if (localStorage.getItem("audioAllowed") === "yes") {
         rightIdx    = nextRight;
         updateInfo(centerIdx);
         animating = false;
-      }, 220);
+      }, NAV_ANIM_MS);
     }
   }
 

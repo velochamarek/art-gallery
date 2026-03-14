@@ -156,21 +156,6 @@
       background: var(--gold);
       color: var(--bg);
     }
-
-    .scroll-indicator {
-      width: 18px;
-      height: 18px;
-      border-right: 2px solid var(--muted);
-      border-bottom: 2px solid var(--muted);
-      transform: rotate(45deg);
-      margin: 28px auto 0;
-      animation: bounceDown 2s ease-in-out infinite;
-    }
-
-    @keyframes bounceDown {
-      0%, 100% { transform: rotate(45deg) translate(0, 0); opacity: 0.7; }
-      50% { transform: rotate(45deg) translate(8px, 8px); opacity: 1; }
-    }
   </style>
 </head>
 <body>
@@ -186,7 +171,6 @@
       <h1 id="heroTitle">Interactive Museum</h1>
       <p id="subtitle" class="subtitle">A journey through the world's most iconic masterpieces</p>
       <button id="enterBtn" type="button">Vstup do muzea</button>
-      <div class="scroll-indicator" aria-hidden="true"></div>
     </div>
   </section>
 
