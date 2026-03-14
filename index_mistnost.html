@@ -69,7 +69,7 @@ if (localStorage.getItem("audioAllowed") === "yes") {
         en: "Vincent van Gogh · 1889"
       },
       desc: {
-        cz: "Vířící noční obloha nad vesnicí Saint-Rémy-de-Provence.",
+        cz: "Informace: Mona Lisa je komorní olejový portrét z počátku 16. století, proslulý svým záhadným úsměvem a jemným přechodem tónů. Dílo vyniká technikou sfumato, která vytváří plynulé přechody světla a stínu a dává tváři živoucí, téměř dýchající kvalitu. Obraz je vystavován za ochranným sklem a stal se jedním z nejvíce reprodukovaných a analyzovaných děl v dějinách umění. Jeho aura tajemství a technická dokonalost přitahují odborníky i širokou veřejnost.",
         en: "A swirling nocturnal sky above the village of Saint-Rémy-de-Provence."
       },
       url: "./art/starry_night.jpeg"
@@ -250,6 +250,10 @@ if (localStorage.getItem("audioAllowed") === "yes") {
   function updateInfo(idx) {
     infoPanel.classList.add('fading');
     localStorage.setItem("currentPainting", paintings[idx].url);
+    const p = paintings[idx];
+    localStorage.setItem("currentPainting", p.url);
+    localStorage.setItem("selectedPaintingTitle", p.title[currentLang]);
+    localStorage.setItem("selectedPaintingDesc", p.desc[currentLang]);
     setTimeout(() => {
       const p = paintings[idx];
       infoTitle.textContent  = p.title[currentLang];

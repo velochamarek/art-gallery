@@ -64,9 +64,12 @@ const savedDesc = localStorage.getItem("selectedPaintingDesc");
 
 img.src = currentImgUrl;
 
-if (savedTitle) {
-    document.querySelector("#panel-info h3").textContent = savedTitle;
-    document.querySelector("#panel-info p").textContent = savedDesc;
+if (savedTitle || savedDesc) {
+    const titleElement = document.querySelector("#panel-info h3");
+    const descElement = document.querySelector("#panel-info p");
+    
+    if (titleElement) titleElement.textContent = savedTitle || "Neznámý obraz";
+    if (descElement) descElement.textContent = savedDesc || "Popis není k dispozici.";
 }
 
 img.onload = () => {
