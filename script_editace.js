@@ -146,16 +146,41 @@ document.getElementById("clearCanvas").onclick = function clearCanvas() {
     localStorage.removeItem("editedMonaLisa");
 };
  
+// --- ULOŽENÍ DO INDEXEDDB A STAŽENÍ ---
 document.getElementById("saveImage").onclick = function saveImage() {
     const data = canvas.toDataURL("image/png");
-    localStorage.setItem("editedMonaLisa", data);
-   
-    const link = document.createElement("a");
-    link.download = "moje-umeni.png";
-    link.href = data;
-    link.click();
-   
-    alert("Uloženo do paměti i staženo do PC!");
+    const title = localStorage.getItem("selectedPaintingTitle") || "Moje mistrovské dílo";
+    const date = new Date().toLocaleString("cs-CZ");
+ 
+    // 1. Uložení do IndexedDB (lokální databáze)
+    const request = indexedDB.open("MuseumGalleryDB", 1);
+    // Tohle se spustí jen při prvním vytvoření databáze
+    request.onupgradeneeded = function(e) {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains("savedArtworks")) {
+            db.createObjectStore("savedArtworks", { keyPath: "id", autoIncrement: true });
+        }
+    };
+ 
+    request.onsuccess = function(e) {
+        const db = e.target.result;
+        const transaction = db.transaction("savedArtworks", "readwrite");
+        const store = transaction.objectStore("savedArtworks");
+        // Přidáme náš obraz do databáze
+        store.add({ imageData: data, title: title, date: date });
+        transaction.oncomplete = function() {
+            // 2. Stažení do PC (až když je uloženo v DB)
+            const link = document.createElement("a");
+            link.download = "moje-umeni.png";
+            link.href = data;
+            link.click();
+            alert("Uloženo do tvé soukromé galerie i staženo do PC!");
+        };
+    };
+ 
+    request.onerror = function() {
+        alert("Něco se pokazilo při ukládání do galerie.");
+    };
 };
  
 function loadImage() {
