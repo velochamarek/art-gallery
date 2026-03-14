@@ -126,3 +126,20 @@ body {
     cursor: crosshair;
     transition: filter 0.3s ease; /* Plynulý přechod pro filtry */
 }
+#colorPicker {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+#colorPicker::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+#colorPicker::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
