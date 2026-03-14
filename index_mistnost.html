@@ -10,6 +10,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400&display=swap" rel="stylesheet" />
 </head>
 <body>
+     <img id="kurzor" src="./images/lupaKursor.png" alt="kurzor">
+    
   <div id="roomTitle" class="room-title">Interactive Museum</div>
     <div id="obal_nav">
       <button onclick="window.location.href='editace.html'" class="kreslit">Kreslit</button>
@@ -23,7 +25,6 @@
 
 
 <div id="wall">
-
   <button class="arrow" id="btn-left">&#8249;</button>
   <button class="arrow" id="btn-right">&#8250;</button>
 
@@ -150,7 +151,11 @@ if (localStorage.getItem("audioAllowed") === "yes") {
       url: "./art/girl_with_earring.jpg"
     }
   ];
-
+    const kurzor = document.getElementById("kurzor");
+    document.addEventListener("mousemove", (e) => {
+    kurzor.style.left = (e.clientX-15) + "px";
+    kurzor.style.top  = (e.clientY-20) + "px";
+    });
   // ── State ──
   // indices into paintings[] for the three visible slots
   const total = paintings.length;
