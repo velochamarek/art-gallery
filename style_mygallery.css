@@ -4,6 +4,7 @@ body {
     font-family: 'Montserrat', sans-serif;
     margin: 0;
     padding: 0;
+    cursor: none !important;
 }
 
 header {
@@ -109,4 +110,10 @@ header h1 {
     font-size: 1.2rem;
     color: #666;
     margin-top: 50px;
+}
+#kurzorr {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  width: 80px; /* velikost kurzoru */
 }

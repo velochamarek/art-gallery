@@ -39,7 +39,11 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     };
 });
-
+const kurzor = document.getElementById("kurzorr");
+document.addEventListener("mousemove", (e) => {
+    kurzor.style.left = (e.clientX-15) + "px";
+    kurzor.style.top  = (e.clientY-20) + "px";
+});
 function deleteArtwork(id) {
     if(!confirm("Opravdu chceš tento obraz vyřadit ze své sbírky?")) return;
     const request = indexedDB.open("MuseumGalleryDB", 2);
