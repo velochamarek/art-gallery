@@ -26,6 +26,9 @@ if (mobileMenuToggle) {
 function showPanel(id) {
     panels.forEach(p => p.classList.add("hidden")); 
     if(id) document.getElementById("panel-" + id).classList.remove("hidden"); 
+    if (isMobileView()) {
+        menu.classList.remove("is-mobile-open");
+    }
 }
 
 document.querySelectorAll(".menu-item[data-panel]").forEach(btn => {

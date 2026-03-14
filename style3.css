@@ -227,14 +227,17 @@ body {
 
     .menu {
         width: 100vw;
-        right: -100vw;
+        right: 0;
+        transform: translateX(100%);
         height: auto;
-        min-height: 100svh;
+        min-height: unset;
         border-left: 1px solid #333;
+        border-bottom: 1px solid #333;
+        border-radius: 0 0 0 12px;
     }
 
     .menu.is-mobile-open {
-        right: 0;
+        transform: translateX(0);
     }
 
     .panel {
