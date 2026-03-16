@@ -28,5 +28,7 @@ Projekt vznikl během hackathonu jako rychlý prototyp kombinující online gale
 ## Autoři
 
 Lan Anh Hoang
+
 Jiří Kodýtek
+
 Marek Velocha
